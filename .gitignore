@@ -1,0 +1,17 @@
+node_modules/
+coverage/
+build/
+.idea/
+.vscode/
+
+*.log
+*.bak
+*.orig
+*.bat
+*.project
+*.tmp
+.idea
+.vscode
+.build
+.lineCount
+**/package-lock.json
