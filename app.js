@@ -5,8 +5,9 @@ const express = require('express');
 const config = require('dotenv').config({ path: './config/.env' });
 const ParameterStoreData = require('./sharedLib/aws/parameter-store-service');
 ParameterStoreData.loadEnvVariablesFromAWSParamStore();
-//const scheduleJobToProcessHIHDlq = require('./services/schedule-job-HIH-dlq')
 const loggerUtils = require('./sharedLib/common/logger-utils');
+const scheduleGenerateFlatfileJob = require('./services/schedule-generate-flatfile-job')
+
 const EventName = 'SS_WORKER_APP';
 let logParams = {};
 const logger = loggerUtils.customLogger( EventName, logParams);
@@ -16,6 +17,6 @@ const port = process.env.port || 8092;
 app.listen(port, () => {
     logger.info(`app.listen, listining on port: ${port}`);
     // The following function invoke the sqs message consumer service when ever the application starts.
-    //scheduleJobToProcessHIHDlq.scheduleProcessHIHDlq();
+    scheduleGenerateFlatfileJob.schedule_gen_flat_file();
     logger.info('app.listen, scheduleProcessHIHDlq Job Started');
 });

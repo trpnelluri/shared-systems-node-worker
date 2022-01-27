@@ -4,7 +4,7 @@ const moment = require('moment');
 process.setMaxListeners(0);
 
 const timestampMoment = () => moment().format('YYYY/MM/DD HH:mm:ss SSS');
-const workerName = 'shared-systems-node-worker'
+const workerName = 'ss-node-worker'
 const env = process.env.environment
 const globaltransid = '-'
 const corelationid = '-'
