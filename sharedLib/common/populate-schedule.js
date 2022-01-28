@@ -2,10 +2,11 @@
 
 const schedule = require('node-schedule');
 
-const runOnWeekEnds = process.env.scheduletorunonweekends || 'no^1-5'//yes or no^days to run
-const scheduleMinitue = process.env.scheduleinmins || '0'// time in mins the Job should trigger
-const scheduleSecond = process.env.scheduleinsecs || '1'// time in secs the Job should trigger
-const scheduleNightly = process.env.schedulenightly || 'no^6-19'//yes or no^hours to run
+const runOnWeekEnds = process.env.pa_req_bacth_runon_weekends || 'no^1-5'//yes or no^days to run
+const scheduleNightly = process.env.pa_req_bacth_runon_nightly || 'no^6-19'//yes or no^hours to run
+const scheduleMinitue = process.env.pa_req_bacth_start_min || '0'// time in mins the Job should trigger
+const scheduleSecond = process.env.pa_req_bacth_start_sec || '1'// time in secs the Job should trigger
+
 /*
 NOTE: scheduleJob Propety is '* * * * * *'
 Explanation: 
