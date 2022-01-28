@@ -2,11 +2,6 @@
 
 const schedule = require('node-schedule');
 
-const runOnWeekEnds = process.env.pa_req_bacth_runon_weekends || 'no^1-5'//yes or no^days to run
-const scheduleNightly = process.env.pa_req_bacth_runon_nightly || 'no^6-19'//yes or no^hours to run
-const scheduleMinitue = process.env.pa_req_bacth_start_min || '0'// time in mins the Job should trigger
-const scheduleSecond = process.env.pa_req_bacth_start_sec || '1'// time in secs the Job should trigger
-
 /*
 NOTE: scheduleJob Propety is '* * * * * *'
 Explanation: 
@@ -23,11 +18,11 @@ Explanation:
 NOTE: The following function is used to build the schedule job based on the values provided 
     in parameter store configuration.
 */
-async function populateSchedule ( logger ){
+async function populateSchedule ( logger, runOnWeekEnds, scheduleNightly, scheduleMinitue, scheduleSecond ){
 
     return new Promise((resolve, reject) => {
         try {
-            logger.info(`populateSchedule, runOnWeekEnds: ${runOnWeekEnds} scheduleNightly: ${scheduleNightly} scheduleMinitue: ${scheduleMinitue} scheduleSecond${scheduleSecond}`)
+            
             const rule = new schedule.RecurrenceRule();
             //Schedule to run on only Weekdays 
             if ( runOnWeekEnds !== undefined ) {
