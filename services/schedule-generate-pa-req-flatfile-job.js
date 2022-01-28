@@ -7,7 +7,7 @@ const loggerUtils = require('../sharedLib/common/logger-utils');
 const EventName = 'SCHEDULER'
 const logger = loggerUtils.customLogger( EventName, {});
 
-async function schedule_gen_flat_file () {
+async function schedule_gen_pa_req_flat_file () {
   
     const rule = await scheduleJobConfig.populateSchedule(logger)
 
@@ -20,5 +20,5 @@ async function schedule_gen_flat_file () {
 }
 
 module.exports = {
-    schedule_gen_flat_file,
+    schedule_gen_pa_req_flat_file,
 };
