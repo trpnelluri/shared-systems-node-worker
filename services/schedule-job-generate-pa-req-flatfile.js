@@ -18,23 +18,16 @@ async function schedule_gen_pa_req_flat_file () {
 
     logger.info(`schedule_gen_pa_req_flat_file, runOnWeekEnds: ${runOnWeekEnds} scheduleNightly: ${scheduleNightly} scheduleMinitue: ${scheduleMinitue} scheduleSecond: ${scheduleSecond}`)
     const rule = await scheduleJobConfig.populateSchedule(logger, runOnWeekEnds, scheduleNightly, scheduleMinitue, scheduleSecond )
-    const dateTomorrow = new Date();
-
+    
     let holidayChkRanForToday = false
     let generateFlatFile = false
 
     const job = schedule.scheduleJob(rule, function(){
-
-        const dateToday = new Date();
-
         if ( !holidayChkRanForToday ) {
-
             checkHolidays.isHolidayToday(function(err, isHolidayToday) {
-
                 if (err) {
                     logger.error(`schedule_gen_pa_req_flat_file, ERROR: ${err}`)
                 } else {
-                    dateTomorrow.setDate(dateToday.getDate() + 1);
                     holidayChkRanForToday = true    // This value will take care the Holiday Check will not run every time in a day
                     generateFlatFile = isHolidayToday      // This value will take care 
                     if ( isHolidayToday ) {
@@ -46,35 +39,24 @@ async function schedule_gen_pa_req_flat_file () {
                         logger.info(`schedule_gen_pa_req_flat_file, if job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
                     }
                 }
-
             })
-
         } else {
-
             logger.info('Skipping the Holiday Check.');
             if ( generateFlatFile ) {
                 logger.info('its Not Holiday.');
             }
-            
         }
-        
+        const dateToday = new Date();
         const dateJobNextRun = Date.parse(job.nextInvocation());
-
-        logger.info(`schedule_gen_pa_req_flat_file, dateJobNextRun: ${dateJobNextRun}`)
-
         const dateHolidayChk = new Date(dateJobNextRun)
-        logger.info(`schedule_gen_pa_req_flat_file, dateHolidayChk.toDateString(): ${dateHolidayChk.toDateString()}`)
-        logger.info(`schedule_gen_pa_req_flat_file, dateToday.toDateString(): ${dateToday.toDateString()}`)
-
+        logger.info(`schedule_gen_pa_req_flat_file, dateJobNextRun: ${dateJobNextRun} dateHolidayChk: ${dateHolidayChk.toDateString()} dateToday: ${dateToday.toDateString()}`)
         if ( dateToday.toDateString() !== dateHolidayChk.toDateString() ) {
             holidayChkRanForToday = false
             logger.info(`schedule_gen_pa_req_flat_file, inside If holidayChkRanForToday: ${holidayChkRanForToday}`)
         }
-        
         logger.info(`schedule_gen_pa_req_flat_file, holidayChkRanForToday: ${holidayChkRanForToday}`)
         
     });
-    
 }
 
 module.exports = {
