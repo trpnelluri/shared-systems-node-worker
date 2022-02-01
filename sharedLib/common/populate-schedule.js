@@ -54,7 +54,8 @@ async function populateSchedule ( logger, runOnWeekEnds, scheduleNightly, schedu
                 }
             }
             // The follwoing values are to triggier the job hourly in 1st second.
-            rule.minute = scheduleMinitue // 0
+            rule.minute = null
+            //rule.minute = scheduleMinitue // 0
             rule.second = scheduleSecond // 1
 
             logger.info(`populateSchedule, rule: ${JSON.stringify(rule)}`)

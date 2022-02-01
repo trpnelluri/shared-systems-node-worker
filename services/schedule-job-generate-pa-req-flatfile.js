@@ -1,7 +1,9 @@
 'use strict';
 
 const schedule = require('node-schedule');
+//const PopulateData = require('../services-utils/get-flatfile-data')
 const scheduleJobConfig = require('../sharedLib/common/populate-schedule')
+const checkHolidays = require('../sharedLib/common/holiday-check');
 const loggerUtils = require('../sharedLib/common/logger-utils');
 
 const runOnWeekEnds = process.env.pa_req_bacth_runon_weekends || 'no^1-5'//yes or no^days to run
@@ -14,14 +16,65 @@ const logger = loggerUtils.customLogger( EventName, {});
 
 async function schedule_gen_pa_req_flat_file () {
 
-    logger.info(`schedule_gen_pa_req_flat_file, runOnWeekEnds: ${runOnWeekEnds} scheduleNightly: ${scheduleNightly} scheduleMinitue: ${scheduleMinitue} scheduleSecond${scheduleSecond}`)
+    logger.info(`schedule_gen_pa_req_flat_file, runOnWeekEnds: ${runOnWeekEnds} scheduleNightly: ${scheduleNightly} scheduleMinitue: ${scheduleMinitue} scheduleSecond: ${scheduleSecond}`)
     const rule = await scheduleJobConfig.populateSchedule(logger, runOnWeekEnds, scheduleNightly, scheduleMinitue, scheduleSecond )
+    const dateTomorrow = new Date();
+
+    let holidayChkRanForToday = false
+    let generateFlatFile = false
 
     const job = schedule.scheduleJob(rule, function(){
-        logger.info('The world is going to end today date automate RecurrenceRule.');
-        logger.info(`schedule_gen_pa_req_flat_file, job.nextInvocation(): ${JSON.stringify(job.nextInvocation())}`);
-    });
 
+        const dateToday = new Date();
+
+        if ( !holidayChkRanForToday ) {
+
+            checkHolidays.isHolidayToday(function(err, isHolidayToday) {
+
+                if (err) {
+                    logger.error(`schedule_gen_pa_req_flat_file, ERROR: ${err}`)
+                } else {
+                    dateTomorrow.setDate(dateToday.getDate() + 1);
+                    holidayChkRanForToday = true    // This value will take care the Holiday Check will not run every time in a day
+                    generateFlatFile = isHolidayToday      // This value will take care 
+                    if ( isHolidayToday ) {
+                        generateFlatFile = false
+                        logger.info(`schedule_gen_pa_req_flat_file, job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
+                    } else {
+                        generateFlatFile = true
+                        logger.info('The world is going to end today date automate RecurrenceRule.');
+                        logger.info(`schedule_gen_pa_req_flat_file, if job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
+                    }
+                }
+
+            })
+
+        } else {
+
+            logger.info('Skipping the Holiday Check.');
+            if ( generateFlatFile ) {
+                logger.info('its Not Holiday.');
+            }
+            
+        }
+        
+        const dateJobNextRun = Date.parse(job.nextInvocation());
+
+        logger.info(`schedule_gen_pa_req_flat_file, dateJobNextRun: ${dateJobNextRun}`)
+
+        const dateHolidayChk = new Date(dateJobNextRun)
+        logger.info(`schedule_gen_pa_req_flat_file, dateHolidayChk.toDateString(): ${dateHolidayChk.toDateString()}`)
+        logger.info(`schedule_gen_pa_req_flat_file, dateToday.toDateString(): ${dateToday.toDateString()}`)
+
+        if ( dateToday.toDateString() !== dateHolidayChk.toDateString() ) {
+            holidayChkRanForToday = false
+            logger.info(`schedule_gen_pa_req_flat_file, inside If holidayChkRanForToday: ${holidayChkRanForToday}`)
+        }
+        
+        logger.info(`schedule_gen_pa_req_flat_file, holidayChkRanForToday: ${holidayChkRanForToday}`)
+        
+    });
+    
 }
 
 module.exports = {

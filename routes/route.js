@@ -7,4 +7,6 @@ const router = express.Router();
 
 router.get('/', controller.default);
 
+router.get('/holidaysList', controller.holidaysList);
+
 module.exports = router;
