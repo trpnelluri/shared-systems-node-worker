@@ -55,7 +55,7 @@ async function schedule_gen_pa_req_flat_file () {
             logger.info(`schedule_gen_pa_req_flat_file, inside If holidayChkRanForToday: ${holidayChkRanForToday}`)
         }
         logger.info(`schedule_gen_pa_req_flat_file, holidayChkRanForToday: ${holidayChkRanForToday}`)
-        
+
     });
 }
 

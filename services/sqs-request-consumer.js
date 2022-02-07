@@ -16,7 +16,7 @@ function start_SS_Req_Sqs_Service () {
     const logger = loggerUtils.customLogger(EventName, logParams);
       
     logger.info(`start_SS_Req_Sqs_Service, SQSURL is: ${SQSURL} pollingWaitTime: ${pollingWaitTime}ms }`);
-
+    
     const app = Consumer.create({
         queueUrl: SQSURL,
         attributeNames: [
