@@ -4,7 +4,7 @@ const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
 const bucket = process.env.bucketname;
 
-async function fetchJSONObjFromS3(objectKey){
+async function fetchJSONObjFromS3Config(objectKey){
     try {
         const params = {
             Bucket: bucket,
@@ -23,5 +23,5 @@ async function fetchJSONObjFromS3(objectKey){
     }
 }
 module.exports = {
-    fetchJSONObjFromS3
+    fetchJSONObjFromS3Config
 };
