@@ -4,18 +4,19 @@ const { Consumer } = require('sqs-consumer');
 const AWS = require('aws-sdk');
 const https = require('https')
 const loggerUtils = require('../sharedLib/common/logger-utils');
-const EventName = 'REQUEST_CONSUMER'
+const ProcessPARequest = require('../services-utils/pa-requests/process-pa-request');
+const EventName = 'PA_REQUEST_CONSUMER'
 
-function start_SS_Req_Sqs_Service () {
+function ss_pa_req_sqs_service () {
 
-    const SQSURL = process.env.ss_req_sqs_url
+    const SQSURL = process.env.ss_pa_req_sqs_url
     const pollingWaitTime = process.env.ss_req_consumer_polling_wait_time_ms;
     const batchSizeToProcess = process.env.req_msgs_batch_size
          
     let logParams = {globaltransid: '', messageid: '' };
-    const logger = loggerUtils.customLogger(EventName, logParams);
+    let logger = loggerUtils.customLogger(EventName, logParams);
       
-    logger.info(`start_SS_Req_Sqs_Service, SQSURL is: ${SQSURL} pollingWaitTime: ${pollingWaitTime}ms }`);
+    logger.info(`ss_pa_req_sqs_service, SQSURL is: ${SQSURL} pollingWaitTime: ${pollingWaitTime}ms }`);
     
     const app = Consumer.create({
         queueUrl: SQSURL,
@@ -28,17 +29,20 @@ function start_SS_Req_Sqs_Service () {
         batchSize: batchSizeToProcess,
         pollingWaitTimeMs: pollingWaitTime, //5 seconds and it's configurable
         handleMessageBatch: async (messages) => {
-            logger.debug(`start_SS_Req_Sqs_Service, Messages: ${messages}`)
+            logger.debug(`ss_pa_req_sqs_service, Messages: ${messages}`)
             if ( messages.length > 0 ) {
                 for (let i = 0; i < messages.length; i++) {
-                    logger.info('start_SS_Req_Sqs_Service, Message from queue : ' + JSON.stringify(messages[i]));
-                    //TBD let messageDataobj = JSON.parse(messages[i].Body);  
-                    //TBD const { transaction_id } = messageDataobj[0]; //This value is glbl_uniq_id in esMD
+                    let paReqObj = JSON.parse(messages[i].Body);
+                    logger.info(`JSON.stringify(paReqObj): ${JSON.stringify(paReqObj)}`)
+                    const glblUniqId = paReqObj.ffdata.esmdtransactionid
+                    console.log(`glblUniqId: ${glblUniqId}`)
+                    let logParams = {globaltransid: glblUniqId}
+                    logger = loggerUtils.customLogger( EventName, logParams)
                     const { MessageId, ReceiptHandle } = messages[i];
                     const MessageDeduplicationId = messages[i].Attributes.MessageDeduplicationId
+                    logger.info(`ss_pa_req_sqs_service, MessageId: ${MessageId} MessageDeduplicationId: ${MessageDeduplicationId} ReceiptHandle: ${ReceiptHandle}`)
                     //NOTE: If we are moving the message from DLQ to Main Queue we need to update the MessageDeduplicationId to process it again in main queue.
-                    logger.info(`start_SS_Req_Sqs_Service,  MessageId: ${MessageId} ReceiptHandle: ${ReceiptHandle}  MessageDeduplicationId: ${MessageDeduplicationId}`);
-                    //await ProcessMesssage.processSQSMessage(message, transaction_id, MessageId, requiredEnvData)
+                    await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, MessageId )
                 }
             }
         },
@@ -52,32 +56,32 @@ function start_SS_Req_Sqs_Service () {
     });
 
     app.on('error', (err) => {
-        logger.error(`start_SS_Req_Sqs_Service, Error in Audit Trans Consumer: ${err.message}`);
+        logger.error(`ss_pa_req_sqs_service, Error in Audit Trans Consumer: ${err.message}`);
     });
   
     app.on('processing_error', (err) => {
-        logger.error(`start_SS_Req_Sqs_Service, processing_error in Audit Trans Consumer: ${err.stack}`);
+        logger.error(`ss_pa_req_sqs_service, processing_error in Audit Trans Consumer: ${err.stack}`);
     });
 
     app.on('timeout_error', (err) => {
-        logger.error(`start_SS_Req_Sqs_Service, timeout_error in Audit Trans Consumer: ${err.stack}`);
+        logger.error(`ss_pa_req_sqs_service, timeout_error in Audit Trans Consumer: ${err.stack}`);
     });
 
     app.on('message_processed', (err) => {
-        logger.info('start_SS_Req_Sqs_Service, message_processed Successfully in Audit Trans Consumer');
+        logger.info('ss_pa_req_sqs_service, message_processed Successfully in Audit Trans Consumer');
     });
   
     app.start();
     
     process.on('SIGINT', () => {
-        logger.info('start_SS_Req_Sqs_Service, SIGINT Received stopping Audit Trans consumer');
+        logger.info('ss_pa_req_sqs_service, SIGINT Received stopping Audit Trans consumer');
         logger.clear();
         app.stop();
-        setTimeout(process.exit, 10000);
+        setTimeout(process.exit, 5000);
     });
 
 }
 
 module.exports = {
-    start_SS_Req_Sqs_Service,
+    ss_pa_req_sqs_service,
 };

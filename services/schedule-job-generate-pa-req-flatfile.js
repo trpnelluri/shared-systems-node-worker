@@ -1,7 +1,6 @@
 'use strict';
 
 const schedule = require('node-schedule');
-//const PopulateData = require('../services-utils/get-flatfile-data')
 const scheduleJobConfig = require('../sharedLib/common/populate-schedule')
 const checkHolidays = require('../sharedLib/common/holiday-check');
 const loggerUtils = require('../sharedLib/common/logger-utils');
