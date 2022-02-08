@@ -34,7 +34,7 @@ function ss_pa_req_sqs_service () {
                 for (let i = 0; i < messages.length; i++) {
                     let paReqObj = JSON.parse(messages[i].Body);
                     logger.info(`JSON.stringify(paReqObj): ${JSON.stringify(paReqObj)}`)
-                    const glblUniqId = paReqObj.ffdata[0].esmdtransactionid
+                    const glblUniqId = paReqObj.pa_req_data[0].esmdtransactionid
                     console.log(`glblUniqId: ${glblUniqId}`)
                     let logParams = {globaltransid: glblUniqId}
                     logger = loggerUtils.customLogger( EventName, logParams)
