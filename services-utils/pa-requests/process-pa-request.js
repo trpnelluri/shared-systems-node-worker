@@ -18,8 +18,13 @@ const paReqBodyObjName = process.env.bodyobj
 async function processPAReqSQSMsg (payload, glblUniqId, msgId ) {
     const logParams = { globaltransid: glblUniqId };
     const logger = loggerUtils.customLogger(EventName, logParams);
-    const paReqFFRecData = await generateFlatFileRecord(payload, glblUniqId, configFolder, paReqBodyObjName )
-    logger.info(`processPAReqSQSMsg, paReqFFRecData: ${paReqFFRecData}`)
+    try {
+        const paReqFFRecData = await generateFlatFileRecord(payload, glblUniqId, configFolder, paReqBodyObjName )
+        logger.info(`processPAReqSQSMsg, paReqFFRecData: ${paReqFFRecData}`)
+
+    } catch (err) {
+        logger.error(`processPAReqSQSMsg, ERROR: : ${err.stack}` )
+    }
 }
 
 module.exports = {
