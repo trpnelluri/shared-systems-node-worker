@@ -8,7 +8,7 @@
 */
 'use strict'
 
-//const PostgresDBSevice = require('../../sharedLib/db/postgre-sql-pool');
+const PostgresDBSevice = require('../../sharedLib/db/postgre-sql-pool');
 const loggerUtils = require('../../sharedLib/common/logger-utils');
 const { convertPAReqObjToFlatFileRecord } = require('../../sharedLib/common/convert-json-obj-to-flatfile-record')
 const { buildInsertQuery } = require('./build-insert-query')
@@ -16,13 +16,15 @@ const EventName = 'PROCESS_PA_REQUEST'
 const configFolder = process.env.pareqconfigfolder
 const paReqBodyObjName = process.env.bodyobj
 
+PostgresDBSevice.connectToPostgresDB();
+
 async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData ) {
     const logParams = { globaltransid: glblUniqId };
     const logger = loggerUtils.customLogger(EventName, logParams);
     try {
         const paReqDataObj = payload.pa_req_data
         const paReqFFRecData = await convertPAReqObjToFlatFileRecord(paReqDataObj, glblUniqId, configFolder, paReqBodyObjName )
-        logger.info(`processPAReqSQSMsg, paReqFFRecData: ${paReqFFRecData}`)
+        logger.debug(`processPAReqSQSMsg, paReqFFRecData: ${paReqFFRecData}`)
         const metaDataObj = payload.metadata
         const addiMetaDataAttribute = requiredEnvData.metadataattribute
         if ( addiMetaDataAttribute !== undefined && addiMetaDataAttribute !== null) {
@@ -35,7 +37,18 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData ) {
             })
         }
         const insertStatement = await buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData )
-        logger.info(`processPAReqSQSMsg, insertStatement: ${insertStatement}`)
+        //logger.info(`processPAReqSQSMsg, insertStatement: ${insertStatement}`)
+
+        PostgresDBSevice.insertData(insertStatement, logParams, (err, status) => {
+            if ( err ) {
+                logger.error(`processPAReqSQSMsg, ERROR in Insert flatfile record : ${err.stack}`);
+            } else {
+                logger.info(`status: ${status}`);
+                return status;
+            }
+            
+        });
+
     } catch (err) {
         logger.error(`processPAReqSQSMsg, ERROR: : ${err.stack}` )
     }
