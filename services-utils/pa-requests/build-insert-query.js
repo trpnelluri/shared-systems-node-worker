@@ -72,7 +72,6 @@ async function buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData ) {
             });
         }
 
-        logger.debug(`buildInsertQuery, dbColumnNames: ${dbColumnNames} values: ${values}`);
         const insertQuery = `INSERT INTO ${tableName}(${dbColumnNames}) VALUES(${values})`;
         logger.info(`buildInsertQuery, insertQuery: ${insertQuery}`);
         resolve(insertQuery);

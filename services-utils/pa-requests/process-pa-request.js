@@ -24,21 +24,20 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData ) {
     try {
         const paReqDataObj = payload.pa_req_data
         const paReqFFRecData = await convertPAReqObjToFlatFileRecord(paReqDataObj, glblUniqId, configFolder, paReqBodyObjName )
-        logger.debug(`processPAReqSQSMsg, paReqFFRecData: ${paReqFFRecData}`)
+        logger.info('processPAReqSQSMsg, paReqFFRecData generated Successfully')
         const metaDataObj = payload.metadata
         const addiMetaDataAttribute = requiredEnvData.metadataattribute
         if ( addiMetaDataAttribute !== undefined && addiMetaDataAttribute !== null) {
             const metaDataAttributeObj = addiMetaDataAttribute.split(',')
             metaDataAttributeObj.forEach((element) => {
-                logger.debug(`processPAReqSQSMsg, metaDataAttributeObj element: ${element}`);
+                logger.info(`processPAReqSQSMsg, metaDataAttributeObj element: ${element}`);
                 if ( element === 'flat_fil_rec_obj' ) {
                     metaDataObj.flat_fil_rec_obj = paReqFFRecData
                 }
             })
         }
         const insertStatement = await buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData )
-        //logger.info(`processPAReqSQSMsg, insertStatement: ${insertStatement}`)
-
+        logger.info('processPAReqSQSMsg, Build insert statement Successfully ')
         PostgresDBSevice.insertData(insertStatement, logParams, (err, status) => {
             if ( err ) {
                 logger.error(`processPAReqSQSMsg, ERROR in Insert flatfile record : ${err.stack}`);
