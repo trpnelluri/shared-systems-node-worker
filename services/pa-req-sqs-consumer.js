@@ -12,6 +12,13 @@ function ss_pa_req_sqs_service () {
     const SQSURL = process.env.ss_pa_req_sqs_url
     const pollingWaitTime = process.env.ss_req_consumer_polling_wait_time_ms;
     const batchSizeToProcess = process.env.req_msgs_batch_size
+
+    const requiredEnvData = {
+        tablename: process.env.pareqtodcdatatable,
+        columns: process.env.pareqinsertcolumns,
+        additionalcols: process.env.pareqadditionalcolumns,
+        metadataattribute:process.env.pareqaddidataattribute
+    }
          
     let logParams = {globaltransid: '', messageid: '' };
     let logger = loggerUtils.customLogger(EventName, logParams);
@@ -42,7 +49,7 @@ function ss_pa_req_sqs_service () {
                     const MessageDeduplicationId = messages[i].Attributes.MessageDeduplicationId
                     logger.info(`ss_pa_req_sqs_service, MessageId: ${MessageId} MessageDeduplicationId: ${MessageDeduplicationId} ReceiptHandle: ${ReceiptHandle}`)
                     //NOTE: If we are moving the message from DLQ to Main Queue we need to update the MessageDeduplicationId to process it again in main queue.
-                    await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, MessageId )
+                    await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, requiredEnvData)
                 }
             }
         },
