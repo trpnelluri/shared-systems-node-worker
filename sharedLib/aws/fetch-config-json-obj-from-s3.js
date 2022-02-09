@@ -7,6 +7,9 @@ const bucket = process.env.bucketname;
 
 const EventName = 'GET_CONFIG_OBJ_FROM_S3'
 
+/*
+The follwoing function is used to fetch the data from the config file in s3 bucket.
+*/
 async function fetchJSONObjFromS3Config(glblUniqId, objectKey){
     try {
         let logParams = {globaltransid: glblUniqId}

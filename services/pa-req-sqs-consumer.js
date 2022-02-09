@@ -1,5 +1,14 @@
 'use strict';
 
+/**
+ *  This is an esMD sqs consumer serivce to handle the SQS message processing and insert the data into appropriate tables in postgre-sql database.
+ * 
+ *  @author Siva Nelluri
+ *	@date 02/07/2021
+ *	@version 1.0.0
+ * 
+*/
+
 const { Consumer } = require('sqs-consumer');
 const AWS = require('aws-sdk');
 const https = require('https')

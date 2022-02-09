@@ -1,4 +1,12 @@
 'use strict'
+/**
+ *  This is an esMD service to populate schedule based on the config values in aws parameter store.
+ * 
+ *  @author Siva Nelluri
+ *	@date 01/25/2021
+ *	@version 1.0.0
+ * 
+*/
 
 const schedule = require('node-schedule');
 

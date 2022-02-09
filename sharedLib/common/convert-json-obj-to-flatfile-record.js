@@ -1,12 +1,12 @@
+'use strict'
 /**
- *  This is an esMD sqs consumer serivce to handle the SQS message processing and insert the data into appropriate tables in postgre-sql database.
+ *  This is an esMD service to convert the request JSON obj into flatfile record.
  *
  * @author Siva Nelluri
  * @date 02/07/2021
  * @version 1.0.0
  *
 */
-'use strict'
 
 const fixy = require('fixy')
 const loggerUtils = require('./logger-utils');
@@ -15,6 +15,10 @@ const { fetchJSONObjFromS3Config } = require('../aws/fetch-config-json-obj-from-
 
 const EventName = 'CONVERT_PAREQ_TO_FF_REC'
 
+/*
+The follwoing function is used to convert the request json object into flatfile record based on the 
+    the config object available in aws s3.
+*/
 async function convertPAReqObjToFlatFileRecord (payload, glblUniqId, configFolder, configObjName ) {
     const logParams = { globaltransid: glblUniqId };
     const logger = loggerUtils.customLogger(EventName, logParams);

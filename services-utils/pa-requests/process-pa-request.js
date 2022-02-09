@@ -41,6 +41,7 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData ) {
         PostgresDBSevice.insertData(insertStatement, logParams, (err, status) => {
             if ( err ) {
                 logger.error(`processPAReqSQSMsg, ERROR in Insert flatfile record : ${err.stack}`);
+                throw new Error(`Could not retrieve file from S3: ${err.stack}`)
             } else {
                 logger.info(`status: ${status}`);
                 return status;

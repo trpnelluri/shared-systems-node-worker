@@ -1,5 +1,15 @@
 'use strict';
 
+/**
+ *  This is an esMD sschdule job serivce to run on hourly basis and generate required data to send the 
+ *      flatfiles from esMD to Data Center.
+ * 
+ *  @author Siva Nelluri
+ *	@date 01/24/2021
+ *	@version 1.0.0
+ * 
+*/
+
 const schedule = require('node-schedule');
 const scheduleJobConfig = require('../sharedLib/common/populate-schedule')
 const checkHolidays = require('../sharedLib/common/holiday-check');
@@ -12,7 +22,9 @@ const scheduleSecond = process.env.pa_req_bacth_start_sec || '1'// time in secs 
 
 const EventName = 'SCHEDULER'
 const logger = loggerUtils.customLogger( EventName, {});
-
+/*
+The following method will schedule the schedule job to trigger based on the config values in aws parameter store.
+*/
 async function schedule_gen_pa_req_flat_file () {
 
     logger.info(`schedule_gen_pa_req_flat_file, runOnWeekEnds: ${runOnWeekEnds} scheduleNightly: ${scheduleNightly} scheduleMinitue: ${scheduleMinitue} scheduleSecond: ${scheduleSecond}`)
@@ -34,6 +46,7 @@ async function schedule_gen_pa_req_flat_file () {
                         logger.info(`schedule_gen_pa_req_flat_file, job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
                     } else {
                         generateFlatFile = true
+                        //TBD Implement the process to generate the flat files.
                         logger.info('The world is going to end today date automate RecurrenceRule.');
                         logger.info(`schedule_gen_pa_req_flat_file, if job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
                     }
@@ -42,6 +55,7 @@ async function schedule_gen_pa_req_flat_file () {
         } else {
             logger.info('Skipping the Holiday Check.');
             if ( generateFlatFile ) {
+                //TBD Implement the process to generate the flat files.
                 logger.info('its Not Holiday.');
             }
         }

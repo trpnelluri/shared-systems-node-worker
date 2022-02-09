@@ -21,14 +21,7 @@ function loadEnvVariablesFromAWSParamStore() {
         console.error('loadEnvVariablesFromAWSParamStore, ERROR loading the env variables: ' + err.stack)
     }
 }
-/*
-function getParameterFromStore(param, logger){
-    logger.debug(`getParameterFromStore param: ${param}`);
-    let returnData = awsParamStore.getParameterSync( notificationPath + param, { region: process.env.AWS_REGION || 'us-east-1' } )
-    logger.info(`getParameterFromStore returnData : ${JSON.stringify(returnData)}`);
-    return returnData;
-}
-*/
+
 module.exports = {
     loadEnvVariablesFromAWSParamStore,
 };

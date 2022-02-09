@@ -1,10 +1,10 @@
 'use strict'
 
 /**
- *  This is postgreSQL connection service to insert the data into appropriate tables in postgre-sql database.
+ *  This is an esMD postgreSQL connection service to insert the data into appropriate tables in postgre-sql database.
  * 
  *  @author Siva Nelluri
- *	@date 09/20/2021
+ *	@date 02/08/2021
  *	@version 1.0.0
  * 
 */
@@ -41,8 +41,8 @@ const connectToPostgresDB = () => {
     
                 pool = new Pool({
                     user: dbConnDetails.username,
-                    //host: dbConnDetails.host,
-                    host:'localhost',
+                    host: dbConnDetails.host,
+                    //host:'localhost',
                     database: dbConnDetails.dbname,
                     password: dbConnDetails.password,
                     port: dbConnDetails.port,
@@ -73,7 +73,8 @@ const connectToPostgresDB = () => {
 }
 
 /*
-The follwoing function is used to insert the Audit trans data into esmd_data.submsn_trans_actn_audt_log table
+The follwoing function is used to insert the data into esMD dataabse in any table mentioned in the AWS parameter store.
+Ex: esmd_data.ptnt_pa_rqst_to_data_cntr
 */
 const insertData = async function (text, logParams, callback, poolData) {
     const logger = loggerUtils.customLogger(EventName, logParams);

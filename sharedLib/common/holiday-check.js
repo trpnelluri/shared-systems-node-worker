@@ -1,8 +1,20 @@
 'use strict'
+/**
+ *  This is an esMD service, used to check today is holiday or not.
+ * 
+ *  @author Siva Nelluri
+ *	@date 01/27/2021
+ *	@version 1.0.0
+ * 
+*/
 
 const loggerUtils = require('./logger-utils');
 const EventName = 'HOLIDAY_CHECK'
 
+/*
+The follwoing method is used to verify the holiday's for the perticular year mentioned in aws parameter store.
+    retruns true if it is holiday or else it will false.
+*/
 function isHolidayToday(callback) {
     let isHolidayToday = false
     const todaysDate = new Date()
