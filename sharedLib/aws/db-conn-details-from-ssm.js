@@ -16,7 +16,7 @@ exports.getDBConnDetails = function (params, logger, callback) {
             logger.error(`getDBConnDetails, ERROR: ${err.stack}`)
             callback(err, data);
         } else {
-            logger.debug(`getDBConnDetails, Successfully retrevied the DBConnection details from SecretManager data: ${data.SecretString}`)
+            logger.debug(`getDBConnDetails, Successfully retrieved the DBConnection details from SecretManager data: ${data.SecretString}`)
             const returnData = data.SecretString;
             callback(null, returnData);
         }
