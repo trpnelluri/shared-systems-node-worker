@@ -36,8 +36,6 @@ async function schedule_gen_pa_req_flat_file () {
 
     const job = schedule.scheduleJob(scheduleJobName, rule, function(){
 
-        //logger.info(`schedule_gen_pa_req_flat_file, my_job: ${JSON.stringify(my_job)}`)
-
         if ( !holidayChkRanForToday ) {
             checkHolidays.isHolidayToday(function(err, isHolidayToday) {
                 if (err) {
