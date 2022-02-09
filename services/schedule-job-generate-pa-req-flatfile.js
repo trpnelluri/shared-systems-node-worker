@@ -19,6 +19,7 @@ const runOnWeekEnds = process.env.pa_req_bacth_runon_weekends || 'no^1-5'//yes o
 const scheduleNightly = process.env.pa_req_bacth_runon_nightly || 'no^6-19'//yes or no^hours to run
 const scheduleMinitue = process.env.pa_req_bacth_start_min || '0'// time in mins the Job should trigger
 const scheduleSecond = process.env.pa_req_bacth_start_sec || '1'// time in secs the Job should trigger
+const scheduleJobName = process.env.esmd_to_dc_schd_job_name
 
 const EventName = 'SCHEDULER'
 const logger = loggerUtils.customLogger( EventName, {});
@@ -33,7 +34,10 @@ async function schedule_gen_pa_req_flat_file () {
     let holidayChkRanForToday = false
     let generateFlatFile = false
 
-    const job = schedule.scheduleJob(rule, function(){
+    const job = schedule.scheduleJob(scheduleJobName, rule, function(){
+
+        //logger.info(`schedule_gen_pa_req_flat_file, my_job: ${JSON.stringify(my_job)}`)
+
         if ( !holidayChkRanForToday ) {
             checkHolidays.isHolidayToday(function(err, isHolidayToday) {
                 if (err) {

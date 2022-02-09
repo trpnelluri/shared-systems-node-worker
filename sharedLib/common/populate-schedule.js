@@ -27,55 +27,47 @@ NOTE: The following function is used to build the schedule job based on the valu
     in parameter store configuration.
 */
 async function populateSchedule ( logger, runOnWeekEnds, scheduleNightly, scheduleMinitue, scheduleSecond ){
-
     return new Promise((resolve, reject) => {
-        try {
-            
-            const rule = new schedule.RecurrenceRule();
-            //Schedule to run on only Weekdays 
-            if ( runOnWeekEnds !== undefined ) {
-                let arrRunOnWeekEnds = runOnWeekEnds.split('^')
-                let paramRunOnWeekEnds = arrRunOnWeekEnds[0].toLowerCase()
-                let runOnWeekDays = arrRunOnWeekEnds[1]
-                if ( paramRunOnWeekEnds === 'no') {
-                    if ( runOnWeekDays !== '' && runOnWeekDays !== undefined ) {
-                        let arrDaysToRun = runOnWeekDays.split('-')
-                        rule.dayOfWeek = new schedule.Range(arrDaysToRun[0], arrDaysToRun[1])
-                    } else {
-                        rule.dayOfWeek = new schedule.Range(1, 5) //This will be the default value if we don't provide in Parameter Store
-                    }
+        const rule = new schedule.RecurrenceRule();
+        //Schedule to run on only Weekdays 
+        if ( runOnWeekEnds !== undefined ) {
+            let arrRunOnWeekEnds = runOnWeekEnds.split('^')
+            let paramRunOnWeekEnds = arrRunOnWeekEnds[0].toLowerCase()
+            let runOnWeekDays = arrRunOnWeekEnds[1]
+            if ( paramRunOnWeekEnds === 'no') {
+                if ( runOnWeekDays !== '' && runOnWeekDays !== undefined ) {
+                    let arrDaysToRun = runOnWeekDays.split('-')
+                    rule.dayOfWeek = new schedule.Range(arrDaysToRun[0], arrDaysToRun[1])
+                } else {
+                    rule.dayOfWeek = new schedule.Range(1, 5) //This will be the default value if we don't provide in Parameter Store
                 }
             }
-            //Schedule to run on only business hours 
-            if ( scheduleNightly !== undefined ) {
-                let arrScheNightly = scheduleNightly.split('^')
-                let paramScheNightly = arrScheNightly[0].toLowerCase()
-                let hoursToRun = arrScheNightly[1]
-                if ( paramScheNightly === 'no') {
-                    rule.hour = new schedule.Range(6, 19)
-                    if ( hoursToRun !== '' && hoursToRun !== undefined ) {
-                        let arrHoursToRun = hoursToRun.split('-')
-                        rule.hour = new schedule.Range(arrHoursToRun[0], arrHoursToRun[1])
-                    } else {
-                        rule.hour = new schedule.Range(6, 19) //This will be the default value if we don't provide in Parameter Store
-                    }
-                }
-            }
-            // The follwoing values are to triggier the job hourly in 1st second.
-            //rule.minute = null
-            rule.minute = scheduleMinitue // 0
-            rule.second = scheduleSecond // 1
-
-            logger.info(`populateSchedule, rule: ${JSON.stringify(rule)}`)
-            
-            resolve(rule)
-
-        } catch (err) {
-            logger.error(`populateSchedule, ERROR: ${err.stack}`);
-            reject(err);
         }
-   
-    })
+        //Schedule to run on only business hours 
+        if ( scheduleNightly !== undefined ) {
+            let arrScheNightly = scheduleNightly.split('^')
+            let paramScheNightly = arrScheNightly[0].toLowerCase()
+            let hoursToRun = arrScheNightly[1]
+            if ( paramScheNightly === 'no') {
+                rule.hour = new schedule.Range(6, 19)
+                if ( hoursToRun !== '' && hoursToRun !== undefined ) {
+                    let arrHoursToRun = hoursToRun.split('-')
+                    rule.hour = new schedule.Range(arrHoursToRun[0], arrHoursToRun[1])
+                } else {
+                    rule.hour = new schedule.Range(6, 19) //This will be the default value if we don't provide in Parameter Store
+                }
+            }
+        }
+        // The follwoing values are to triggier the job hourly in 1st second.
+        rule.minute = null
+        //rule.minute = scheduleMinitue // 0
+        rule.second = scheduleSecond // 1
+        logger.info(`populateSchedule, rule: ${JSON.stringify(rule)}`)
+        resolve(rule)
+
+    }).catch((err) => {
+        logger.error(`populateSchedule, ERROR: ${err.stack}`);
+    });
 }
 
 module.exports = {
