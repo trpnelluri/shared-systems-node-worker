@@ -41,8 +41,8 @@ const connectToPostgresDB = () => {
     
                 pool = new Pool({
                     user: dbConnDetails.username,
-                    host: dbConnDetails.host,
-                    //host:'localhost',
+                    //host: dbConnDetails.host,
+                    host:'localhost',
                     database: dbConnDetails.dbname,
                     password: dbConnDetails.password,
                     port: dbConnDetails.port,
