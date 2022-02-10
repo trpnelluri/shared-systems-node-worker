@@ -26,9 +26,16 @@ Explanation:
 NOTE: The following function is used to build the schedule job based on the values provided 
     in parameter store configuration.
 */
-async function populateSchedule ( logger, runOnWeekEnds, scheduleNightly, scheduleMinitue, scheduleSecond ){
+async function populateSchedule ( logger, scheduleInfo ){
     return new Promise((resolve, reject) => {
         const rule = new schedule.RecurrenceRule();
+        const runOnWeekEnds = scheduleInfo.runonweekends
+        const scheduleNightly = scheduleInfo.schedulenightly
+        let scheduleMinitue = scheduleInfo.scheduleminitue
+        if ( scheduleMinitue === 'null' ) {
+            scheduleMinitue = null
+        }
+        const scheduleSecond = scheduleInfo.schedulesecond
         //Schedule to run on only Weekdays 
         if ( runOnWeekEnds !== undefined ) {
             let arrRunOnWeekEnds = runOnWeekEnds.split('^')
@@ -59,8 +66,7 @@ async function populateSchedule ( logger, runOnWeekEnds, scheduleNightly, schedu
             }
         }
         // The follwoing values are to triggier the job hourly in 1st second.
-        rule.minute = null
-        //rule.minute = scheduleMinitue // 0
+        rule.minute = scheduleMinitue // 0
         rule.second = scheduleSecond // 1
         logger.info(`populateSchedule, rule: ${JSON.stringify(rule)}`)
         resolve(rule)

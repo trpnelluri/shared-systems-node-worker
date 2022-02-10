@@ -106,7 +106,42 @@ const insertData = async function (text, logParams, callback, poolData) {
 };
 
 
+/*
+The follwoing function is used to get the reference data from esmd_data.audt_evnt_actn_rfrnc table to based on audt_evnt_actn_name
+*/
+const getRequiredRefData = async function (query, valsToReplace, logParams, callback, poolData = undefined) {
+    const logger = loggerUtils.customLogger( EventName, logParams);
+    logger.info(`getRequiredRefData query to execute: ${query} valuesToReplace: ${valsToReplace}`);
+    try {
+        const client = await pool.connect();
+        const newClient = poolData || client ;
+        let rowsFound = false;
+       
+        newClient.query(query, valsToReplace, (err, res) => {
+            if (err) {
+                logger.error(`getRequiredRefData error getting ref data: ${err.stack}`);
+                callback(err, 0);
+            } else {
+                logger.info(`res result to send: ${JSON.stringify(res)} res.rowCount: ${res.rowCount}`);
+                client.release();
+                count -= 1;
+                logger.debug(`count release: ${count}`);
+                if ( res.rowCount > 0 ) {
+                    rowsFound = true
+                }
+                callback(null, rowsFound, res.rows)
+            }
+        });
+
+    } catch(err) {
+        logger.error(`getRequiredRefData catch block error: ${err.stack}`);
+        callback(err, 0);
+    }
+};
+
+
 module.exports = {
     connectToPostgresDB,
     insertData,
+    getRequiredRefData
 }
