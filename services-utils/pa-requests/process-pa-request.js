@@ -8,15 +8,15 @@
 */
 'use strict'
 
-const PostgresDBSevice = require('../../sharedLib/db/postgre-sql-pool');
 const loggerUtils = require('../../sharedLib/common/logger-utils');
 const { convertPAReqObjToFlatFileRecord } = require('../../sharedLib/common/convert-json-obj-to-flatfile-record')
 const { buildInsertQuery } = require('./build-insert-query')
+const { connectToPostgresDB, insertData } = require('../../sharedLib/db/postgre-sql-pool');
+connectToPostgresDB();
+
 const EventName = 'PROCESS_PA_REQUEST'
 const configFolder = process.env.pareqconfigfolder
 const paReqBodyObjName = process.env.bodyobj
-
-PostgresDBSevice.connectToPostgresDB();
 
 async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData ) {
     const logParams = { globaltransid: glblUniqId };
@@ -38,17 +38,15 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData ) {
         }
         const insertStatement = await buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData )
         logger.info('processPAReqSQSMsg, Build insert statement Successfully ')
-        PostgresDBSevice.insertData(insertStatement, logParams, (err, status) => {
+        insertData(insertStatement, logParams, (err, status) => {
             if ( err ) {
                 logger.error(`processPAReqSQSMsg, ERROR in Insert flatfile record : ${err.stack}`);
-                throw new Error(`Could not retrieve file from S3: ${err.stack}`)
+                throw new Error(`insertData failed: ${err.stack}`)
             } else {
                 logger.info(`status: ${status}`);
                 return status;
             }
-            
         });
-
     } catch (err) {
         logger.error(`processPAReqSQSMsg, ERROR: : ${err.stack}` )
     }

@@ -15,8 +15,9 @@ const logger = loggerUtils.customLogger( EventName, logParams);
 const app = express();
 app.use('/', require('./routes/route'));
 const port = process.env.port || 8092;
+const releaseVersion = process.env.releaseversion
 app.listen(port, () => {
-    logger.info(`app.listen, listining on port: ${port}`);
+    logger.info(`app.listen, listining on port: ${port} Release Version: ${releaseVersion}`);
     // The following function invoke the sqs message consumer service when ever the application starts.
     scheduleGenerateFlatfileJob.schedule_gen_pa_req_flat_file();
     logger.info('app.listen, schedule_gen_pa_req_flat_file Job Started');
