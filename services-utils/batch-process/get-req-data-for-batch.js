@@ -1,6 +1,5 @@
 'use strict'
 
-//const { now } = require('moment');
 const loggerUtils = require('../../sharedLib/common/logger-utils');
 const PostgresDBSevice = require('../../sharedLib/db/postgre-sql-pool');
 
@@ -26,7 +25,6 @@ exports.getRequiredDataForBatchfile = async () => {
                 logger.error(`getRequiredDataForBatchfile, ERROR: getRequiredRefData: ${err.stack}`);
                 reject(err);
             } else {
-                //TBD to Add the code 
                 resolve(batchFileInfo);
             }
         });

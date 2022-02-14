@@ -91,7 +91,7 @@ const insertData = async function (text, logParams, callback, poolData) {
                 logger.info(`insertData, Inserted rows count: ${res.rowCount}`);
                 client.release();
                 count -= 1;
-                logger.debug(`insertData, count release: ${count}`);
+                logger.debug(`insertData, client connections count: ${count}`);
                 if (res.rowCount > 0) {
                     callback(null, 'SUCCESS');
                 } else {
@@ -111,7 +111,7 @@ The follwoing function is used to get the reference data from esmd_data.audt_evn
 */
 const getRequiredRefData = async function (query, valsToReplace, logParams, callback, poolData = undefined) {
     const logger = loggerUtils.customLogger( EventName, logParams);
-    logger.info(`getRequiredRefData query to execute: ${query} valuesToReplace: ${valsToReplace}`);
+    logger.info(`getRequiredRefData, Query to execute: ${query} valuesToReplace: ${valsToReplace}`);
     try {
         const client = await pool.connect();
         const newClient = poolData || client ;
@@ -119,13 +119,13 @@ const getRequiredRefData = async function (query, valsToReplace, logParams, call
        
         newClient.query(query, valsToReplace, (err, res) => {
             if (err) {
-                logger.error(`getRequiredRefData error getting ref data: ${err.stack}`);
+                logger.error(`getRequiredRefData, Error getting ref data: ${err.stack}`);
                 callback(err, 0);
             } else {
-                logger.info(`res result to send: ${JSON.stringify(res)} res.rowCount: ${res.rowCount}`);
+                logger.info(`getRequiredRefData, res result to send: ${JSON.stringify(res)} res.rowCount: ${res.rowCount}`);
                 client.release();
                 count -= 1;
-                logger.debug(`count release: ${count}`);
+                logger.debug(`getRequiredRefData, client connections count: ${count}`);
                 if ( res.rowCount > 0 ) {
                     rowsFound = true
                 }
@@ -134,7 +134,7 @@ const getRequiredRefData = async function (query, valsToReplace, logParams, call
         });
 
     } catch(err) {
-        logger.error(`getRequiredRefData catch block error: ${err.stack}`);
+        logger.error(`getRequiredRefData, Catch block error: ${err.stack}`);
         callback(err, 0);
     }
 };
