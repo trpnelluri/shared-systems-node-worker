@@ -16,7 +16,7 @@ const loggerUtils = require('../sharedLib/common/logger-utils');
 const ProcessPARequest = require('../services-utils/pa-requests/process-pa-request');
 const EventName = 'PA_REQUEST_CONSUMER'
 
-function ss_pa_req_sqs_service () {
+function ss_pa_req_sqs_service (PostgresDBSevice) {
 
     const SQSURL = process.env.ss_pa_req_sqs_url
     const pollingWaitTime = process.env.ss_req_consumer_polling_wait_time_ms;
@@ -58,7 +58,7 @@ function ss_pa_req_sqs_service () {
                     const MessageDeduplicationId = messages[i].Attributes.MessageDeduplicationId
                     logger.info(`ss_pa_req_sqs_service, MessageId: ${MessageId} MessageDeduplicationId: ${MessageDeduplicationId} ReceiptHandle: ${ReceiptHandle}`)
                     //NOTE: If we are moving the message from DLQ to Main Queue we need to update the MessageDeduplicationId to process it again in main queue.
-                    await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, requiredEnvData)
+                    await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, requiredEnvData, PostgresDBSevice)
                 }
             }
         },

@@ -27,7 +27,7 @@ const logger = loggerUtils.customLogger( EventName, {});
 /*
 The following method will schedule the schedule job to trigger based on the config values in aws parameter store.
 */
-async function schedule_gen_pa_req_flat_file () {
+async function schedule_gen_pa_req_flat_file (PostgresDBSevice) {
 
     logger.info(`schedule_gen_pa_req_flat_file, runOnWeekEnds: ${runOnWeekEnds} scheduleNightly: ${scheduleNightly} scheduleMinitue: ${scheduleMinitue} scheduleSecond: ${scheduleSecond}`)
 
@@ -55,7 +55,7 @@ async function schedule_gen_pa_req_flat_file () {
                         } else {
                             generateFlatFile = true
                             //TBD Implement the process to generate the flat files.
-                            populateDataForBatchFileGeneration()
+                            populateDataForBatchFileGeneration(PostgresDBSevice)
                             logger.info('The world is going to end today date automate RecurrenceRule.');
                             logger.info(`schedule_gen_pa_req_flat_file, if job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
                         }
@@ -65,7 +65,7 @@ async function schedule_gen_pa_req_flat_file () {
                 logger.info('Skipping the Holiday Check.');
                 if ( generateFlatFile ) {
                 //TBD Implement the process to generate the flat files.
-                    populateDataForBatchFileGeneration()
+                    populateDataForBatchFileGeneration(PostgresDBSevice)
                     logger.info('its Not Holiday.');
                 }
             }

@@ -1,13 +1,11 @@
 'use strict'
 
 const loggerUtils = require('../../sharedLib/common/logger-utils');
-const PostgresDBSevice = require('../../sharedLib/db/postgre-sql-pool');
 
 const sqlToGetRequiredInfo = process.env.ref_sql_pa_req_batch_data
 const EventName = 'GET_REQUIRED_DATA_FOR_BATCHFILE'
-PostgresDBSevice.connectToPostgresDB();
 
-exports.getRequiredDataForBatchfile = async () => {
+exports.getRequiredDataForBatchfile = async (PostgresDBSevice) => {
     const logParams = {}
     const logger = loggerUtils.customLogger( EventName, logParams);
     

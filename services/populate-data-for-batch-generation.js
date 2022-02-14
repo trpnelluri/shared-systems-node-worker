@@ -6,10 +6,10 @@ const { sendMsgToGenerateFlatfileSQS } = require('../services-utils/batch-proces
 
 const EventName = 'POPULATE_DATA_FOR_BATCHFILE'
 
-async function populateDataForBatchFileGeneration () {
+async function populateDataForBatchFileGeneration (PostgresDBSevice) {
     const logger = loggerUtils.customLogger(EventName, {});
     try{
-        const response = await getRequiredDataForBatchfile ()
+        const response = await getRequiredDataForBatchfile (PostgresDBSevice)
         logger.info(`populateDataForBatchFileGeneration, responselength: ${response.length}`)
         if ( response.length ) {
             let sednMesageStatus = await sendMsgToGenerateFlatfileSQS(response)

@@ -2,12 +2,12 @@
 
 const AWS = require('aws-sdk')
 const loggerUtils = require('../../sharedLib/common/logger-utils');
-//const IdServiceShared = require('../../sharedLib/common/id-service')
+const IdServiceShared = require('../../sharedLib/common/id-service')
 
 AWS.config.update({ region: 'us-east-1' })
 let sqs = new AWS.SQS({ apiVersion: '2012-11-05' })
 const EventName = 'SEND_MESSAGE_TO_GEN_FF_SQS'
-//const messageGroupId = 'esMDtoDC_FlatFile'
+const messageGroupId = 'esMDtoDC_FlatFile'
 
 const targetQueueQRL = process.env.ss_req_gen_flatfile_sqs_url
 
@@ -16,14 +16,14 @@ async function sendMsgToGenerateFlatfileSQS (msgBody) {
     const logger = loggerUtils.customLogger( EventName, {});
 
     return new Promise((resolve, reject) => {
-        logger.info(`sendMsgToGenerateFlatfileSQS, targetQueueQRL ${targetQueueQRL} `)
-        //const messageDeduplicationId = IdServiceShared.getInstance().getId();
-        //logger.info(`sendMsgToGenerateFlatfileSQS, new messageDeduplicationId: ${messageDeduplicationId}`)
+        logger.info(`sendMsgToGenerateFlatfileSQS, targetQueueQRL ${targetQueueQRL} msgBody: ${JSON.stringify(msgBody)} `)
+        const messageDeduplicationId = IdServiceShared.getInstance().getId();
+        logger.info(`sendMsgToGenerateFlatfileSQS, new messageDeduplicationId: ${messageDeduplicationId}`)
         const sendMsgParams = {
-            MessageBody: msgBody,
+            MessageBody: JSON.stringify(msgBody),
             QueueUrl: targetQueueQRL,
-            //MessageGroupId: messageGroupId,
-            //MessageDeduplicationId: messageDeduplicationId,
+            MessageGroupId: messageGroupId,
+            MessageDeduplicationId: messageDeduplicationId,
         }
         logger.info(`sendMsgToGenerateFlatfileSQS, sendMsgParams: ${JSON.stringify(sendMsgParams)}`)
                             

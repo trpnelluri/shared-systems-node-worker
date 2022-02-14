@@ -11,14 +11,12 @@
 const loggerUtils = require('../../sharedLib/common/logger-utils');
 const { convertPAReqObjToFlatFileRecord } = require('../../sharedLib/common/convert-json-obj-to-flatfile-record')
 const { buildInsertQuery } = require('./build-insert-query')
-const { connectToPostgresDB, insertData } = require('../../sharedLib/db/postgre-sql-pool');
-connectToPostgresDB();
 
 const EventName = 'PROCESS_PA_REQUEST'
 const configFolder = process.env.pareqconfigfolder
 const paReqBodyObjName = process.env.bodyobj
 
-async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData ) {
+async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, PostgresDBSevice ) {
     const logParams = { globaltransid: glblUniqId };
     const logger = loggerUtils.customLogger(EventName, logParams);
     try {
@@ -38,7 +36,7 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData ) {
         }
         const insertStatement = await buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData )
         logger.info('processPAReqSQSMsg, Build insert statement Successfully ')
-        insertData(insertStatement, logParams, (err, status) => {
+        PostgresDBSevice.insertData(insertStatement, logParams, (err, status) => {
             if ( err ) {
                 logger.error(`processPAReqSQSMsg, ERROR in Insert flatfile record : ${err.stack}`);
                 throw new Error(`insertData failed: ${err.stack}`)
