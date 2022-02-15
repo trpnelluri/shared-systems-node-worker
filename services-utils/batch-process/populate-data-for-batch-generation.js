@@ -1,8 +1,8 @@
 'use strict';
 
-const loggerUtils = require('../sharedLib/common/logger-utils');
-const { getRequiredDataForBatchfile } = require('../services-utils/batch-process/get-req-data-for-batch')
-const { sendMsgToGenerateFlatfileSQS } = require('../services-utils/batch-process/send-msg-to-generate-flatfile-sqs');
+const loggerUtils = require('../../sharedLib/common/logger-utils');
+const { getRequiredDataForBatchfile } = require('./get-req-data-for-batch')
+const { sendMsgToGenerateFlatfileSQS } = require('./send-msg-to-generate-flatfile-sqs');
 
 const EventName = 'POPULATE_DATA_FOR_BATCHFILE'
 
