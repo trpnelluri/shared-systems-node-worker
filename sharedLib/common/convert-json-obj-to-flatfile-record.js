@@ -32,6 +32,7 @@ async function convertPAReqObjToFlatFileRecord (payload, glblUniqId, configFolde
         return flatFileRecData
     } catch (err) {
         logger.error(`convertPAReqObjToFlatFileRecord, ERROR: : ${err.stack}` )
+        throw new Error('convertPAReqObjToFlatFileRecord, Completed with errors.');
     }
 }
 

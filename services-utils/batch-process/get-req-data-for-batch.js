@@ -27,6 +27,6 @@ exports.getRequiredDataForBatchfile = async (PostgresDBSevice) => {
             }
         });
     }).catch((error) => {
-        logger.error(`getRequiredDataForBatchfile, ERROR: ${error}` )
+        logger.error(`getRequiredDataForBatchfile, ERROR catch: ${error}` )
     });
 };

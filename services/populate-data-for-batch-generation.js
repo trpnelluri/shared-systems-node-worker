@@ -18,7 +18,7 @@ async function populateDataForBatchFileGeneration (PostgresDBSevice) {
             logger.info('populateDataForBatchFileGeneration, Data not available to generate flatfile at this time')
         }
     } catch(err) {
-        logger.error('Error')
+        logger.error(`populateDataForBatchFileGeneration, ERROR in catch: ${err.stack}`)
     }
 }
 module.exports = {

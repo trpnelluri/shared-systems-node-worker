@@ -41,12 +41,13 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, Postgre
                 logger.error(`processPAReqSQSMsg, ERROR in Insert flatfile record : ${err.stack}`);
                 throw new Error(`insertData failed: ${err.stack}`)
             } else {
-                logger.info(`status: ${status}`);
+                logger.info(`processPAReqSQSMsg, insertData status: ${status}`);
                 return status;
             }
         });
     } catch (err) {
-        logger.error(`processPAReqSQSMsg, ERROR: : ${err.stack}` )
+        logger.error(`processPAReqSQSMsg, ERROR in catch: ${err.stack}` )
+        throw new Error('processPAReqSQSMsg, Completed with errors.');
     }
 }
 

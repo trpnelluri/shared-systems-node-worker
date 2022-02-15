@@ -45,7 +45,7 @@ async function schedule_gen_pa_req_flat_file (PostgresDBSevice) {
             if ( !holidayChkRanForToday ) {
                 checkHolidays.isHolidayToday(function(err, isHolidayToday) {
                     if (err) {
-                        logger.error(`schedule_gen_pa_req_flat_file, ERROR: ${err}`)
+                        logger.error(`schedule_gen_pa_req_flat_file, ERROR isHolidayToday: ${err}`)
                     } else {
                         holidayChkRanForToday = true    // This value will take care the Holiday Check will not run every time in a day
                         generateFlatFile = isHolidayToday      // This value will take care 
@@ -54,19 +54,14 @@ async function schedule_gen_pa_req_flat_file (PostgresDBSevice) {
                             logger.info(`schedule_gen_pa_req_flat_file, job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
                         } else {
                             generateFlatFile = true
-                            //TBD Implement the process to generate the flat files.
                             populateDataForBatchFileGeneration(PostgresDBSevice)
-                            logger.info('The world is going to end today date automate RecurrenceRule.');
-                            logger.info(`schedule_gen_pa_req_flat_file, if job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
                         }
                     }
                 })
             } else {
-                logger.info('Skipping the Holiday Check.');
                 if ( generateFlatFile ) {
-                //TBD Implement the process to generate the flat files.
+                    logger.info('schedule_gen_pa_req_flat_file, Its Not Holiday and Skipping the Holiday Check.');
                     populateDataForBatchFileGeneration(PostgresDBSevice)
-                    logger.info('its Not Holiday.');
                 }
             }
             const dateToday = new Date();
@@ -81,6 +76,7 @@ async function schedule_gen_pa_req_flat_file (PostgresDBSevice) {
         });
     } catch (err) {
         logger.error(`schedule_gen_pa_req_flat_file, ERROR: ${err.stack}`);
+        throw new Error('schedule_gen_pa_req_flat_file, Completed with errors.');
     }
     
 }

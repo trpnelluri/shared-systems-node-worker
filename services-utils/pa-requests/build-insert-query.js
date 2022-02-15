@@ -77,7 +77,7 @@ async function buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData ) {
         resolve(insertQuery);
 
     }).catch((error) => {
-        logger.error(`buildInsertQuery, ERROR: ${error.stack}`);
+        logger.error(`buildInsertQuery, ERROR catch: ${error.stack}`);
     });
 
 }

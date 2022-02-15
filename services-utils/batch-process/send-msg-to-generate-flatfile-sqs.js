@@ -18,7 +18,7 @@ async function sendMsgToGenerateFlatfileSQS (msgBody) {
     return new Promise((resolve, reject) => {
         logger.info(`sendMsgToGenerateFlatfileSQS, targetQueueQRL ${targetQueueQRL} msgBody: ${JSON.stringify(msgBody)} `)
         const messageDeduplicationId = IdServiceShared.getInstance().getId();
-        logger.info(`sendMsgToGenerateFlatfileSQS, new messageDeduplicationId: ${messageDeduplicationId}`)
+        logger.debug(`sendMsgToGenerateFlatfileSQS, new messageDeduplicationId: ${messageDeduplicationId}`)
         const sendMsgParams = {
             MessageBody: JSON.stringify(msgBody),
             QueueUrl: targetQueueQRL,
@@ -43,7 +43,7 @@ async function sendMsgToGenerateFlatfileSQS (msgBody) {
             }
         })
     }).catch((error) => {
-        logger.error(`sendMsgToGenerateFlatfileSQS, ERROR: ${error}` )
+        logger.error(`sendMsgToGenerateFlatfileSQS, ERROR catch: ${error}` )
     });
 }
 
