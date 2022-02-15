@@ -22,14 +22,14 @@ const scheduleMinitue = process.env.pa_req_bacth_start_min || '0'// time in mins
 const scheduleSecond = process.env.pa_req_bacth_start_sec || '1'// time in secs the Job should trigger
 const scheduleJobName = process.env.esmd_to_dc_schd_job_name
 
-const EventName = 'SCHEDULER'
+const EventName = 'SCHEDULER_SERVICE'
 const logger = loggerUtils.customLogger( EventName, {});
 /*
 The following method will schedule the schedule job to trigger based on the config values in aws parameter store.
 */
-async function schedule_gen_pa_req_flat_file (PostgresDBSevice) {
+async function createScheJobToGenPAReqBatchFile (PostgresDBSevice) {
 
-    logger.info(`schedule_gen_pa_req_flat_file, runOnWeekEnds: ${runOnWeekEnds} scheduleNightly: ${scheduleNightly} scheduleMinitue: ${scheduleMinitue} scheduleSecond: ${scheduleSecond}`)
+    logger.info(`createScheJobToGenPAReqBatchFile, runOnWeekEnds: ${runOnWeekEnds} scheduleNightly: ${scheduleNightly} scheduleMinitue: ${scheduleMinitue} scheduleSecond: ${scheduleSecond} scheduleJobName: ${scheduleJobName}`)
 
     try {
         const scheduleInfo = {
@@ -45,13 +45,13 @@ async function schedule_gen_pa_req_flat_file (PostgresDBSevice) {
             if ( !holidayChkRanForToday ) {
                 checkHolidays.isHolidayToday(function(err, isHolidayToday) {
                     if (err) {
-                        logger.error(`schedule_gen_pa_req_flat_file, ERROR isHolidayToday: ${err}`)
+                        logger.error(`createScheJobToGenPAReqBatchFile, ERROR isHolidayToday: ${err}`)
                     } else {
                         holidayChkRanForToday = true    // This value will take care the Holiday Check will not run every time in a day
                         generateFlatFile = isHolidayToday      // This value will take care 
                         if ( isHolidayToday ) {
                             generateFlatFile = false
-                            logger.info(`schedule_gen_pa_req_flat_file, job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
+                            logger.info(`createScheJobToGenPAReqBatchFile, job.nextInvocation(): ${JSON.stringify(job.nextInvocation())} isHolidayToday: ${isHolidayToday}`);
                         } else {
                             generateFlatFile = true
                             populateDataForBatchFileGeneration(PostgresDBSevice)
@@ -60,27 +60,27 @@ async function schedule_gen_pa_req_flat_file (PostgresDBSevice) {
                 })
             } else {
                 if ( generateFlatFile ) {
-                    logger.info('schedule_gen_pa_req_flat_file, Its Not Holiday and Skipping the Holiday Check.');
+                    logger.info('createScheJobToGenPAReqBatchFile, Its Not Holiday and Skipping the Holiday Check.');
                     populateDataForBatchFileGeneration(PostgresDBSevice)
                 }
             }
             const dateToday = new Date();
             const dateJobNextRun = Date.parse(job.nextInvocation());
             const dateHolidayChk = new Date(dateJobNextRun)
-            logger.info(`schedule_gen_pa_req_flat_file, dateJobNextRun: ${dateJobNextRun} dateHolidayChk: ${dateHolidayChk.toDateString()} dateToday: ${dateToday.toDateString()}`)
+            logger.info(`createScheJobToGenPAReqBatchFile, dateJobNextRun: ${dateJobNextRun} dateHolidayChk: ${dateHolidayChk.toDateString()} dateToday: ${dateToday.toDateString()}`)
             if ( dateToday.toDateString() !== dateHolidayChk.toDateString() ) {
                 holidayChkRanForToday = false
-                logger.info(`schedule_gen_pa_req_flat_file, inside If holidayChkRanForToday: ${holidayChkRanForToday}`)
+                logger.info(`createScheJobToGenPAReqBatchFile, inside If holidayChkRanForToday: ${holidayChkRanForToday}`)
             }
-            logger.info(`schedule_gen_pa_req_flat_file, holidayChkRanForToday: ${holidayChkRanForToday}`)
+            logger.info(`createScheJobToGenPAReqBatchFile, holidayChkRanForToday: ${holidayChkRanForToday}`)
         });
     } catch (err) {
-        logger.error(`schedule_gen_pa_req_flat_file, ERROR: ${err.stack}`);
-        throw new Error('schedule_gen_pa_req_flat_file, Completed with errors.');
+        logger.error(`createScheJobToGenPAReqBatchFile, ERROR: ${err.stack}`);
+        throw new Error('createScheJobToGenPAReqBatchFile, Completed with errors.');
     }
     
 }
 
 module.exports = {
-    schedule_gen_pa_req_flat_file,
+    createScheJobToGenPAReqBatchFile,
 };
