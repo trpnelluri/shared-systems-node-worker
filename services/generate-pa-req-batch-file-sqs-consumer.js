@@ -25,7 +25,8 @@ function genPAReqBatchFileService (PostgresDBSevice) {
     const requiredEnvData = {
         tablename: process.env.pareqtodcdatatable,
         colstouseinrefsql: process.env.db_cols_to_get_data_for_batch,
-        refsql: process.env.ref_sql_to_get_data_for_batch
+        refsql: process.env.ref_sql_to_get_data_for_batch,
+        refsqlreplacevals: process.env.ref_sql_replace_attributes
     }
          
     let logParams = {globaltransid: '', messageid: '' };

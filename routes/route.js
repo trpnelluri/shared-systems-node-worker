@@ -9,4 +9,6 @@ router.get('/', controller.default);
 
 router.get('/holidaysList', controller.holidaysList);
 
+router.get('/BatchFile', controller.generateBatchFile);
+
 module.exports = router;

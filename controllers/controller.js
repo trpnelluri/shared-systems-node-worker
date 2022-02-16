@@ -1,7 +1,11 @@
 'use strict'
 
 const loggerUtils = require('../sharedLib/common/logger-utils');
-//const holidaysData = require('../sharedLib/common/holiday-check');
+const PostgresDBSevice = require('../sharedLib/db/postgre-sql-pool');
+PostgresDBSevice.connectToPostgresDB()
+
+const generateFlatFile = require('../services-utils/batch-file-generation/process-batch-file-message');
+const { msgDataObj } = require('../sharedLib/common/sample-json-file');
 
 const EventName = 'CONTROLLER'
 
@@ -16,19 +20,24 @@ exports.holidaysList = async(req, res) => {
     logger.info(`default, req.headers: ${JSON.stringify(req.headers)}`)
     //let isHoliday = await holidaysData.isHolidayToday()
     //logger.info(`isHoliday : ${isHoliday}`)
-
-    
     const today = new Date();
     console.log(`todaysDate: ${today}`)
     const tomorrow = new Date();
-    
     // Add 1 Day
     tomorrow.setDate(today.getDate() + 1);
     console.log(`tomorrow Date: ${tomorrow}`)
+};
 
-    // let my_job = schedule.scheduledJobs[scheduleJobName]
-    // my_job.cancel();
-    // logger.info(`schedule_gen_pa_req_flat_file, cancelled the schedule job: ${scheduleJobName}`)
-        
+
+exports.generateBatchFile = async(req, res) => {
+    logger.info(`default, req.headers: ${JSON.stringify(req.headers)}`)
+    const requiredEnvData = {
+        tablename: process.env.pareqtodcdatatable,
+        colstouseinrefsql: process.env.db_cols_to_get_data_for_batch,
+        refsql: process.env.ref_sql_to_get_data_for_batch,
+        refsqlreplacevals: process.env.ref_sql_replace_attributes
+    }
+    let response = await generateFlatFile.processBatchFileSQSMessage (msgDataObj, requiredEnvData, PostgresDBSevice)
+    console.log(`response: ${JSON.stringify(response)}`)
     res.send('Welcome to Unissant232');
 };
