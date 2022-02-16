@@ -1,7 +1,6 @@
 'use strict';
 
 const loggerUtils = require('../../sharedLib/common/logger-utils');
-//const { getRequiredDataForBatchfile } = require('./get-req-data-for-batch')
 const { getAvailableDataFromDB } = require('../../sharedLib/common/get-available-data-from-db');
 const SQSServiceShared = require('../../sharedLib/aws/sqs-service');
 
@@ -22,7 +21,6 @@ async function populateDataForBatchFileGeneration (PostgresDBSevice) {
         const requiredEnvData = {
             refsql: process.env.ref_sql_pa_req_batch_data
         }
-        //const response = await getRequiredDataForBatchfile (PostgresDBSevice)
         const response = await getAvailableDataFromDB (logParams, valsToReplace, requiredEnvData, PostgresDBSevice)
         logger.info(`populateDataForBatchFileGeneration, responselength: ${response.length}`)
         if ( response.length ) {
