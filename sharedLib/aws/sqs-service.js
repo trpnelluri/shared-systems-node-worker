@@ -20,22 +20,26 @@ class SqsService{
         return instance;
     }
     
-    async sendMessage(msgBody, targetQueueQRL) {
-        const logger = loggerUtils.customLogger( EventName, {});
-        const messageDeduplicationId = IdServiceShared.getInstance().getId();
-        logger.info(`sendMessage, targetQueueQRL ${targetQueueQRL} msgBody: ${msgBody}  new messageDeduplicationId: ${messageDeduplicationId}`)
-        const sendMsgParams = {
-            MessageBody: JSON.stringify(msgBody),
-            QueueUrl: targetQueueQRL,
-            MessageGroupId: messageGroupId,
-            MessageDeduplicationId: messageDeduplicationId,
+    async sendMessage(msgBody, targetQueueQRL, logParams) {
+        const logger = loggerUtils.customLogger( EventName, logParams);
+        try {
+            const messageDeduplicationId = IdServiceShared.getInstance().getId();
+            logger.info(`sendMessage, targetQueueQRL ${targetQueueQRL} msgBody: ${msgBody}  new messageDeduplicationId: ${messageDeduplicationId}`)
+            const sendMsgParams = {
+                MessageBody: JSON.stringify(msgBody),
+                QueueUrl: targetQueueQRL,
+                MessageGroupId: messageGroupId,
+                MessageDeduplicationId: messageDeduplicationId,
+            }
+            logger.info(`sendMessage, sendMsgParams: ${JSON.stringify(sendMsgParams)}`)
+            const messageAcknowledge = await sqs.sendMessage(sendMsgParams).promise();
+            logger.debug(`sendMessage, messageAcknowledge: ${JSON.stringify(messageAcknowledge)}`)
+            return messageAcknowledge;
+        } catch (err) {
+            logger.error(`sendMessage, ERROR in sendMessage catch ${JSON.stringify(err.stack)} `)
+            throw Error(`SqsService, Failed to sendMessage to Queue ${targetQueueQRL}, Error: ${JSON.stringify(err)}`);
         }
-        logger.info(`sendMessage, sendMsgParams: ${JSON.stringify(sendMsgParams)}`)
-        const messageAcknowledge = await sqs.sendMessage(sendMsgParams).promise();
-        logger.debug(`sendMessage, messageAcknowledge: ${JSON.stringify(messageAcknowledge)}`)
-        return messageAcknowledge;
     }
-
 }
 
 module.exports = SqsService;

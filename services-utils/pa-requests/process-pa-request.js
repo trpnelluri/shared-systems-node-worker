@@ -9,7 +9,7 @@
 'use strict'
 
 const loggerUtils = require('../../sharedLib/common/logger-utils');
-const { convertPAReqObjToFlatFileRecord } = require('../../sharedLib/common/convert-json-obj-to-flatfile-record')
+const { convertObjDataToFlatFileRecord } = require('../../sharedLib/common/convert-json-obj-to-flatfile-record')
 const { buildInsertQuery } = require('./build-insert-query')
 
 const EventName = 'PROCESS_PA_REQUEST'
@@ -21,7 +21,7 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, Postgre
     const logger = loggerUtils.customLogger(EventName, logParams);
     try {
         const paReqDataObj = payload.pa_req_data
-        const paReqFFRecData = await convertPAReqObjToFlatFileRecord(paReqDataObj, glblUniqId, configFolder, paReqBodyObjName )
+        const paReqFFRecData = await convertObjDataToFlatFileRecord(paReqDataObj, glblUniqId, configFolder, paReqBodyObjName )
         logger.info('processPAReqSQSMsg, paReqFFRecData generated Successfully')
         const metaDataObj = payload.metadata
         const addiMetaDataAttribute = requiredEnvData.metadataattribute
