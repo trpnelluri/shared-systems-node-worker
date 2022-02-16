@@ -7,7 +7,7 @@ const ParameterStoreData = require('./sharedLib/aws/parameter-store-service');
 ParameterStoreData.loadEnvVariablesFromAWSParamStore();
 const loggerUtils = require('./sharedLib/common/logger-utils');
 const CreateScheduleJobService = require('./services/create-schedule-job-to-gen-pa-req-batchfile')
-const ProcessPAReqService = require('./services/process-pa-req-sqs-consumer')
+//const ProcessPAReqService = require('./services/process-pa-req-sqs-consumer')
 const PostgresDBSevice = require('./sharedLib/db/postgre-sql-pool');
 PostgresDBSevice.connectToPostgresDB()
 const EventName = 'SS_WORKER_APP';
@@ -23,6 +23,6 @@ app.listen(port, () => {
     CreateScheduleJobService.createScheJobToGenPAReqBatchFile(PostgresDBSevice);
     logger.info('app.listen, CreateScheduleJobService Job Started');
     // The following function invoke the sqs message consumer service whenever the application starts.
-    ProcessPAReqService.processPARequestService(PostgresDBSevice)
-    logger.info('app.listen, paRequestProcessService Started');
+    //ProcessPAReqService.processPARequestService(PostgresDBSevice)
+    //logger.info('app.listen, paRequestProcessService Started');
 });

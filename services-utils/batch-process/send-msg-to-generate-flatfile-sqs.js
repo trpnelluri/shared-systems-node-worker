@@ -7,7 +7,7 @@ const IdServiceShared = require('../../sharedLib/common/id-service')
 AWS.config.update({ region: 'us-east-1' })
 let sqs = new AWS.SQS({ apiVersion: '2012-11-05' })
 const EventName = 'SEND_MESSAGE_TO_GEN_FF_SQS'
-const messageGroupId = 'esMDtoDC_FlatFile'
+const messageGroupId = 'esMD-SS-Wroker'
 
 const targetQueueQRL = process.env.ss_req_gen_flatfile_sqs_url
 

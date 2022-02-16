@@ -13,26 +13,25 @@ const { Consumer } = require('sqs-consumer');
 const AWS = require('aws-sdk');
 const https = require('https')
 const loggerUtils = require('../sharedLib/common/logger-utils');
-const ProcessPARequest = require('../services-utils/pa-requests/process-pa-request');
-const EventName = 'PA_REQUEST_CONSUMER'
+const ProcessBatchFileMsg = require('../services-utils/batch-process/process-batch-file-message');
+const EventName = 'CREATE_BATCH_FILE_SERVICE'
 
-function ss_pa_req_sqs_service (PostgresDBSevice) {
+function genPAReqBatchFileService (PostgresDBSevice) {
 
-    const SQSURL = process.env.ss_pa_req_sqs_url
-    const pollingWaitTime = process.env.ss_req_consumer_polling_wait_time_ms;
-    const batchSizeToProcess = process.env.req_msgs_batch_size
+    const SQSURL = process.env.ss_req_gen_flatfile_sqs_url
+    const pollingWaitTime = process.env.gen_flatfile_consumer_poll_wait_time_ms;
+    const batchSizeToProcess = process.env.gen_flatfile_msgs_batch_size
 
     const requiredEnvData = {
         tablename: process.env.pareqtodcdatatable,
-        columns: process.env.pareqinsertcolumns,
-        additionalcols: process.env.pareqadditionalcolumns,
-        metadataattribute:process.env.pareqaddidataattribute
+        colstouseinrefsql: process.env.db_cols_to_get_data_for_batch,
+        refsql: process.env.ref_sql_to_get_data_for_batch
     }
          
     let logParams = {globaltransid: '', messageid: '' };
     let logger = loggerUtils.customLogger(EventName, logParams);
       
-    logger.info(`ss_pa_req_sqs_service, SQSURL is: ${SQSURL} pollingWaitTime: ${pollingWaitTime}ms }`);
+    logger.info(`genPAReqBatchFileService, SQSURL is: ${SQSURL} pollingWaitTime: ${pollingWaitTime}ms requiredEnvData: ${JSON.stringify(requiredEnvData)}}`);
     
     const app = Consumer.create({
         queueUrl: SQSURL,
@@ -45,20 +44,15 @@ function ss_pa_req_sqs_service (PostgresDBSevice) {
         batchSize: batchSizeToProcess,
         pollingWaitTimeMs: pollingWaitTime, //5 seconds and it's configurable
         handleMessageBatch: async (messages) => {
-            logger.debug(`ss_pa_req_sqs_service, Messages: ${messages}`)
+            logger.debug(`genPAReqBatchFileService, Messages: ${messages}`)
             if ( messages.length > 0 ) {
                 for (let i = 0; i < messages.length; i++) {
-                    let paReqObj = JSON.parse(messages[i].Body);
-                    logger.info(`JSON.stringify(paReqObj): ${JSON.stringify(paReqObj)}`)
-                    const glblUniqId = paReqObj.pa_req_data[0].esmdtransactionid
-                    console.log(`glblUniqId: ${glblUniqId}`)
-                    let logParams = {globaltransid: glblUniqId}
-                    logger = loggerUtils.customLogger( EventName, logParams)
+                    let batchFileDataObj = JSON.parse(messages[i].Body);
+                    logger.info(`genPAReqBatchFileService, JSON.stringify(batchFileDataObj): ${JSON.stringify(batchFileDataObj)}`)
                     const { MessageId, ReceiptHandle } = messages[i];
                     const MessageDeduplicationId = messages[i].Attributes.MessageDeduplicationId
-                    logger.info(`ss_pa_req_sqs_service, MessageId: ${MessageId} MessageDeduplicationId: ${MessageDeduplicationId} ReceiptHandle: ${ReceiptHandle}`)
-                    //NOTE: If we are moving the message from DLQ to Main Queue we need to update the MessageDeduplicationId to process it again in main queue.
-                    await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, requiredEnvData, PostgresDBSevice)
+                    logger.debug(`genPAReqBatchFileService, MessageId: ${MessageId} MessageDeduplicationId: ${MessageDeduplicationId} ReceiptHandle: ${ReceiptHandle}`)
+                    await ProcessBatchFileMsg.processBatchFileSQSMessage(batchFileDataObj, requiredEnvData, PostgresDBSevice)
                 }
             }
         },
@@ -72,25 +66,25 @@ function ss_pa_req_sqs_service (PostgresDBSevice) {
     });
 
     app.on('error', (err) => {
-        logger.error(`ss_pa_req_sqs_service, Error in Audit Trans Consumer: ${err.message}`);
+        logger.error(`genPAReqBatchFileService, Error in Audit Trans Consumer: ${err.message}`);
     });
   
     app.on('processing_error', (err) => {
-        logger.error(`ss_pa_req_sqs_service, processing_error in Audit Trans Consumer: ${err.stack}`);
+        logger.error(`genPAReqBatchFileService, processing_error in Audit Trans Consumer: ${err.stack}`);
     });
 
     app.on('timeout_error', (err) => {
-        logger.error(`ss_pa_req_sqs_service, timeout_error in Audit Trans Consumer: ${err.stack}`);
+        logger.error(`genPAReqBatchFileService, timeout_error in Audit Trans Consumer: ${err.stack}`);
     });
 
     app.on('message_processed', (err) => {
-        logger.info('ss_pa_req_sqs_service, message_processed Successfully in Audit Trans Consumer');
+        logger.info('genPAReqBatchFileService, message_processed Successfully in Audit Trans Consumer');
     });
   
     app.start();
     
     process.on('SIGINT', () => {
-        logger.info('ss_pa_req_sqs_service, SIGINT Received stopping Audit Trans consumer');
+        logger.info('genPAReqBatchFileService, SIGINT Received stopping Audit Trans consumer');
         logger.clear();
         app.stop();
         setTimeout(process.exit, 5000);
@@ -99,5 +93,5 @@ function ss_pa_req_sqs_service (PostgresDBSevice) {
 }
 
 module.exports = {
-    ss_pa_req_sqs_service,
+    genPAReqBatchFileService,
 };
