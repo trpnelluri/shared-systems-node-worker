@@ -13,7 +13,7 @@ const { Consumer } = require('sqs-consumer');
 const AWS = require('aws-sdk');
 const https = require('https')
 const loggerUtils = require('../sharedLib/common/logger-utils');
-const ProcessBatchFileMsg = require('../services-utils/batch-process/process-batch-file-message');
+const ProcessBatchFileMsg = require('../services-utils/batch-file-generation/process-batch-file-message');
 const EventName = 'CREATE_BATCH_FILE_SERVICE'
 
 function genPAReqBatchFileService (PostgresDBSevice) {

@@ -14,7 +14,7 @@ const schedule = require('node-schedule');
 const scheduleJobConfig = require('../sharedLib/common/populate-schedule')
 const checkHolidays = require('../sharedLib/common/holiday-check');
 const loggerUtils = require('../sharedLib/common/logger-utils');
-const {populateDataForBatchFileGeneration} = require('../services-utils/batch-process/populate-data-for-batch-generation')
+const {populateDataForBatchFileGeneration} = require('../services-utils/schedule-job/populate-data-for-batch-generation')
 
 const runOnWeekEnds = process.env.pa_req_bacth_runon_weekends || 'no^1-5'//yes or no^days to run
 const scheduleNightly = process.env.pa_req_bacth_runon_nightly || 'no^6-19'//yes or no^hours to run
