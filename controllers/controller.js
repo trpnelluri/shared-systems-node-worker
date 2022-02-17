@@ -35,7 +35,9 @@ exports.generateBatchFile = async(req, res) => {
         tablename: process.env.pareqtodcdatatable,
         colstouseinrefsql: process.env.db_cols_to_get_data_for_batch,
         refsql: process.env.ref_sql_to_get_data_for_batch,
-        refsqlreplacevals: process.env.ref_sql_replace_attributes
+        refsqlreplacevals: process.env.ref_sql_replace_attributes,
+        batchfileforsrvcregid: process.env.batch_file_for_srvcreg_id,
+        batchfilefordcfid: process.env.batch_file_for_dcf_id
     }
     let response = await generateFlatFile.processBatchFileSQSMessage (msgDataObj, requiredEnvData, PostgresDBSevice)
     console.log(`response: ${JSON.stringify(response)}`)
