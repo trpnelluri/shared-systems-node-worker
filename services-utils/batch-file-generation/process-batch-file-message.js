@@ -1,6 +1,7 @@
 'use strict';
 
 const loggerUtils = require('../../sharedLib/common/logger-utils');
+const dateTimeUtils = require('../../sharedLib/common/date-time-utils')
 const { getAvailableDataFromDB } = require('../../sharedLib/common/get-available-data-from-db');
 const { buildHeaderData } = require('./build-header')
 const { buildTrailerData } = require('./build-trailer')
@@ -28,9 +29,13 @@ async function processBatchFileSQSMessage (messageDataObj, requiredEnvData, Post
                     headerobj: process.env.headerobj,
                     trailerobj: process.env.trailerobj,
                 }
-                logger.info(`processBatchFileSQSMessage, batchData.length: ${batchData.length} batchFileFor ${batchFileFor} s3ConfigInfo: ${JSON.stringify(s3ConfigInfo)}`);
+                const formattedDateTime = await dateTimeUtils.formattedDateTime(logger)
+                logger.info(`processBatchFileSQSMessage, batchData.length: ${batchData.length} batchFileFor ${batchFileFor} s3ConfigInfo: ${JSON.stringify(s3ConfigInfo)} formattedDateTime: ${formattedDateTime}`);
+                //NOTE: The following 'no_of_records' attribute value will be used in trailer Object
+                msgData.no_of_records = batchData.length
+                msgData.batch_cycle_date = formattedDateTime
                 const headerData = await buildHeaderData(msgData, s3ConfigInfo )
-                const trailerData = await buildTrailerData(msgData, batchData.length, s3ConfigInfo)
+                const trailerData = await buildTrailerData(msgData, s3ConfigInfo)
                 logger.info(`processBatchFileSQSMessage, headerObj: ${headerData.length} trailerObj: ${trailerData.length}`);
             }
         }
