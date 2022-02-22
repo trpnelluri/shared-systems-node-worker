@@ -42,6 +42,23 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, Postgre
                 throw new Error(`insertData failed: ${err.stack}`)
             } else {
                 logger.info(`processPAReqSQSMsg, insertData status: ${status}`);
+                if ( status === 'SUCCESS' ) {
+                    //TBD Need to Add Audit Event
+                    // Sample Object format
+                    /*
+                    [{
+                        "transaction_id": "NJH000007095288",
+                        "request_type": "SharedSystems",
+                        "worker_name": "ss-node-worker",
+                        "date_timestamp": "2021-07-28T15:25:26.845-04:00",
+                        "hostname": "",
+                        "activity_name": "",
+                        "audit_message_id": "SS_FLATFILE_REC_GEN_SUCCESS",      
+                        "audit_message": "MATURED PA REQUEST FLAT FILE RECORD SUCCESSFULLY GENERATED",
+                        "data": ""
+                    }]
+                    */
+                }
                 return status;
             }
         });
