@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 
-exports.createFlatFile = async function (fileName, logger) {
+exports.createBatchFile = async function (fileName, logger) {
     return new Promise((resolve, reject) => {
         const createBatchFile = fs.createWriteStream(fileName, {
             flags: 'a' // 'a' means appending (old data will be preserved)

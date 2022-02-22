@@ -10,7 +10,7 @@ const msgDataObj = [{
     'to_char':'12',
     'data_cntr_id':1,
     'data_cntr_name':'DXC',
-    'clm_type_id':1,
+    'clm_type_id':2,
     'clm_type_ind':'A',
     'clm_type_name':'PARTA',
     'fil_name_tmplt':'DBR.T.DXC000.ESMD00.SS.PRTA.D{0}.T{1}0',

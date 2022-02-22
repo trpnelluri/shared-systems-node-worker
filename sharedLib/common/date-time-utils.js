@@ -48,9 +48,11 @@ async function formattedDateTime (logger) {
         min = (min < 10 ? '0' : '') + min;
         sec = (sec < 10 ? '0' : '') + sec;
         
-        const formattedDate = year + month + day + hour + min + sec
-        logger.debug(`formattedDateTime, formattedDate: ${formattedDate}`);
-        resolve(formattedDate)
+        const formattedDateTime = year + month + day + hour + min + sec
+        const formatdateOnly = month + day + year
+        const returnData = formattedDateTime + '^' + formatdateOnly
+        logger.debug(`formattedDateTime, formattedDate: ${returnData}`);
+        resolve(returnData)
     }).catch((err) => {
         throw Error(`formattedDateTime, failed to convert the datetime: ${JSON.stringify(err)}`);
     });
