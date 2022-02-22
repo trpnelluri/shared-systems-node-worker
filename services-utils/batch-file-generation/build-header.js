@@ -1,7 +1,6 @@
 'use strict';
 
 const loggerUtils = require('../../sharedLib/common/logger-utils');
-//const CommonUtils = require('../../sharedLib/common/common-utils');
 const { convertObjDataToFlatFileRecord } = require('../../sharedLib/common/convert-json-obj-to-flatfile-record')
 
 const EventName = 'BUILD_HEADER'
@@ -21,14 +20,7 @@ async function buildHeaderData (messageDataObj, s3ConfigInfo) {
             const headerAttri = headerAttrArray[0]
             const headerAttriVal = headerAttrArray[1]
             if (headerAttriVal !== 'null' ) {
-                // if ( headerAttri === 'datacenterid' ) {
-                //     let dataCenterID = messageDataObj[headerAttriVal]
-                //     dataCenterID = await CommonUtils.padLeadingZeros(dataCenterID, 3)
-                //     headerObj[headerAttri] = dataCenterID
-                // } else {
                 headerObj[headerAttri] = messageDataObj[headerAttriVal]
-                // }
-                
             } else {
                 headerObj[headerAttri] = ''
             }
@@ -38,12 +30,10 @@ async function buildHeaderData (messageDataObj, s3ConfigInfo) {
         const headerData = await convertObjDataToFlatFileRecord(headerArray, '', s3ConfigInfo.configfolder, s3ConfigInfo.headerobj )
         logger.info(`buildHeaderData, headerData: ${headerData}`)
         return headerData
-
     } catch (err) {
         logger.error(`buildHeaderData, ERROR: ${err.stack}` )
         throw Error(`buildHeaderData, ERROR in Catch: ${JSON.stringify(err)}`);
     }
-
 }
 
 module.exports = {

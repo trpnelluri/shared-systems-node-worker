@@ -34,7 +34,6 @@ async function buildTrailerData (messageDataObj, s3ConfigInfo) {
         logger.error(`buildTrailerData, ERROR: ${err.stack}` )
         throw Error(`buildTrailerData, ERROR in Catch: ${JSON.stringify(err)}`);
     }
-  
 }
 
 module.exports = {

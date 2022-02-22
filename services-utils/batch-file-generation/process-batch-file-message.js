@@ -66,12 +66,10 @@ async function processBatchFileSQSMessage (messageDataObj, requiredEnvData, Post
                 }
             }
         }
-
     } catch (err) {
         logger.error(`processBatchFileSQSMessage, Error in Processing the message: ${err.stack}`);
         throw new Error('processBatchFileSQSMessage, Completed with errors.');
     }
-    
 }
 
 module.exports = {

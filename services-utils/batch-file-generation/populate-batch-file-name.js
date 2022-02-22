@@ -22,7 +22,6 @@ async function populateBatchFileName (batchFileName, formattedDateTime) {
         logger.error(`populateBatchFileName, ERROR: ${err.stack}` )
         throw Error(`populateBatchFileName, ERROR in Catch: ${JSON.stringify(err)}`);
     }
-
 }
 
 module.exports = {
