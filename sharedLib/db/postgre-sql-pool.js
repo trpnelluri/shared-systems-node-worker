@@ -16,6 +16,8 @@ const loggerUtils = require('../common/logger-utils');
 let pool;
 let count = 0;
 const EventName = 'POSTGRES_DB_SERVICE'
+const SUCCESS = 'Success'
+const FAILURE = 'Failure'
 
 /*
 The following function is used to establish the connection to the postgreSQL database from Audit worker and the connection details will
@@ -86,22 +88,22 @@ const insertData = async function (text, logParams, callback, poolData) {
         newClient.query(text, (err, res) => {
             if (err) {
                 logger.error(`insertData, ERROR while insert: ${err.stack}`);
-                callback(err, 'FAILURE');
+                callback(err, FAILURE);
             } else {
                 logger.info(`insertData, Inserted rows count: ${res.rowCount}`);
                 client.release();
                 count -= 1;
                 logger.debug(`insertData, client connections count: ${count}`);
                 if (res.rowCount > 0) {
-                    callback(null, 'SUCCESS');
+                    callback(null, SUCCESS);
                 } else {
-                    callback(null, 'FAILURE');
+                    callback(null, FAILURE);
                 }
             }
         });
     }catch(err) {
         logger.error(`insertData, ERROR in catch block: ${err.stack}`);
-        callback(err, 'FAILURE');
+        callback(err, FAILURE);
     }
 };
 

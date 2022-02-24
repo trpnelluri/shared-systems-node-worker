@@ -3,10 +3,10 @@
 const loggerUtils = require('../../sharedLib/common/logger-utils');
 const { convertObjDataToFlatFileRecord } = require('../../sharedLib/common/convert-json-obj-to-flatfile-record')
 
-const EventName = 'BUILD_HEADER'
+const EventName = 'BUILD_HEADER_RECORD'
 const headerAttributes = process.env.pa_req_header_data
 
-async function buildHeaderData (messageDataObj, s3ConfigInfo) {
+async function buildHeaderRecord (messageDataObj, s3ConfigInfo) {
     const logParams = {}
     const logger = loggerUtils.customLogger(EventName, logParams);
     try {
@@ -14,7 +14,7 @@ async function buildHeaderData (messageDataObj, s3ConfigInfo) {
         let headerObj = new Object;
         const headerAttributesObj = headerAttributes.split(',');
         headerAttributesObj.forEach((element) => {
-            logger.info(`buildHeaderData,  element: ${element}`)
+            logger.info(`buildHeaderRecord,  element: ${element}`)
             const headerAttribute = element.toLowerCase().trim()
             const headerAttrArray = headerAttribute.split('^')
             const headerAttri = headerAttrArray[0]
@@ -26,16 +26,16 @@ async function buildHeaderData (messageDataObj, s3ConfigInfo) {
             }
         });
         headerArray.push(headerObj)
-        logger.info(`buildHeaderData, headerArray: ${JSON.stringify(headerArray)}`)
-        const headerData = await convertObjDataToFlatFileRecord(headerArray, '', s3ConfigInfo.configfolder, s3ConfigInfo.headerobj )
-        logger.info(`buildHeaderData, headerData: ${headerData}`)
-        return headerData
+        logger.info(`buildHeaderRecord, headerArray: ${JSON.stringify(headerArray)}`)
+        const headerRecord = await convertObjDataToFlatFileRecord(headerArray, '', s3ConfigInfo.configfolder, s3ConfigInfo.headerobj )
+        logger.info(`buildHeaderRecord, headerRecord: ${headerRecord}`)
+        return headerRecord
     } catch (err) {
-        logger.error(`buildHeaderData, ERROR: ${err.stack}` )
-        throw Error(`buildHeaderData, ERROR in Catch: ${JSON.stringify(err)}`);
+        logger.error(`buildHeaderRecord, ERROR: ${err.stack}` )
+        throw Error(`buildHeaderRecord, ERROR in Catch: ${JSON.stringify(err)}`);
     }
 }
 
 module.exports = {
-    buildHeaderData,
+    buildHeaderRecord,
 }

@@ -3,10 +3,10 @@
 const loggerUtils = require('../../sharedLib/common/logger-utils');
 const { convertObjDataToFlatFileRecord } = require('../../sharedLib/common/convert-json-obj-to-flatfile-record')
 
-const EventName = 'BUILD_TRAILER'
+const EventName = 'BUILD_TRAILER_RECORD'
 const trailerAttributes = process.env.pa_req_trailer_data
 
-async function buildTrailerData (messageDataObj, s3ConfigInfo) {
+async function buildTrailerRecord (messageDataObj, s3ConfigInfo) {
     const logParams = {}
     const logger = loggerUtils.customLogger(EventName, logParams);
     try {
@@ -14,7 +14,7 @@ async function buildTrailerData (messageDataObj, s3ConfigInfo) {
         let trailerObj = new Object;
         const trailerAttributesObj = trailerAttributes.split(',');
         trailerAttributesObj.forEach((element) => {
-            logger.info(`buildTrailerData,  element: ${element}`)
+            logger.info(`buildTrailerRecord,  element: ${element}`)
             const trailerAttribute = element.toLowerCase().trim()
             const trailerAttrArray = trailerAttribute.split('^')
             const trailerAttri = trailerAttrArray[0]
@@ -26,16 +26,16 @@ async function buildTrailerData (messageDataObj, s3ConfigInfo) {
             }
         });
         trailerArray.push(trailerObj)
-        logger.info(`buildTrailerData, trailerObj: ${JSON.stringify(trailerArray)}`)
-        const trailerData = convertObjDataToFlatFileRecord(trailerArray, '', s3ConfigInfo.configfolder, s3ConfigInfo.trailerobj )
-        logger.info(`buildTrailerData, trailerData: ${trailerData}`)
-        return trailerData
+        logger.info(`buildTrailerRecord, trailerObj: ${JSON.stringify(trailerArray)}`)
+        const trailerRecord = convertObjDataToFlatFileRecord(trailerArray, '', s3ConfigInfo.configfolder, s3ConfigInfo.trailerobj )
+        logger.info(`buildTrailerRecord, trailerRecord: ${trailerRecord}`)
+        return trailerRecord
     } catch(err) {
-        logger.error(`buildTrailerData, ERROR: ${err.stack}` )
-        throw Error(`buildTrailerData, ERROR in Catch: ${JSON.stringify(err)}`);
+        logger.error(`buildTrailerRecord, ERROR: ${err.stack}` )
+        throw Error(`buildTrailerRecord, ERROR in Catch: ${JSON.stringify(err)}`);
     }
 }
 
 module.exports = {
-    buildTrailerData,
+    buildTrailerRecord,
 }

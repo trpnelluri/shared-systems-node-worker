@@ -15,6 +15,8 @@ const { buildInsertQuery } = require('./build-insert-query')
 const EventName = 'PROCESS_PA_REQUEST'
 const configFolder = process.env.pareqconfigfolder
 const paReqBodyObjName = process.env.bodyobj
+const SUCCESS = 'Success'
+//const FAILURE = 'Failure'
 
 async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, PostgresDBSevice ) {
     const logParams = { globaltransid: glblUniqId };
@@ -42,7 +44,7 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, Postgre
                 throw new Error(`insertData failed: ${err.stack}`)
             } else {
                 logger.info(`processPAReqSQSMsg, insertData status: ${status}`);
-                if ( status === 'SUCCESS' ) {
+                if ( status === SUCCESS ) {
                     //TBD Need to Add Audit Event
                     // Sample Object format
                     /*
