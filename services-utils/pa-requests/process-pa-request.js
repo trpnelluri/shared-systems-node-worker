@@ -27,6 +27,7 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, Postgre
         logger.info('processPAReqSQSMsg, paReqFFRecData generated Successfully')
         const metaDataObj = payload.metadata
         const addiMetaDataAttribute = requiredEnvData.metadataattribute
+        //NOTE: Adding the flat PA request file record to meta data object to insert into the esMD database - Start
         if ( addiMetaDataAttribute !== undefined && addiMetaDataAttribute !== null) {
             const metaDataAttributeObj = addiMetaDataAttribute.split(',')
             metaDataAttributeObj.forEach((element) => {
@@ -36,6 +37,7 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, Postgre
                 }
             })
         }
+        //NOTE: Adding the flat PA request file record to meta data object to insert into the esMD database - End
         const insertStatement = await buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData )
         logger.info('processPAReqSQSMsg, Build insert statement Successfully ')
         PostgresDBSevice.insertData(insertStatement, logParams, (err, status) => {
