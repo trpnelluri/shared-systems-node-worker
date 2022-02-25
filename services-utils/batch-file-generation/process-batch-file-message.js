@@ -10,7 +10,7 @@ const { populateBatchFileName } = require('./populate-batch-file-name')
 const { generateBatchFileToDC } = require('./generate-batch-file-and-deliver-to-dc')
 
 const EventName = 'PROCESS_BATCHFILE_MSG'
-//const SUCCESS = 'Success'
+const SUCCESS = 'Success'
 
 async function processBatchFileSQSMessage (messageDataObj, requiredEnvData, PostgresDBSevice) {
     const logParams = {}
@@ -31,7 +31,7 @@ async function processBatchFileSQSMessage (messageDataObj, requiredEnvData, Post
             logger.info(`processBatchFileSQSMessage, batchData.length: ${batchData.length}`);
             if ( batchData.length ) {
                 logger.info(`processBatchFileSQSMessage, batchFileFor: ${batchFileFor} genSrvcregBatchId: ${genSrvcregBatchId} genDcfBatchId: ${genDcfBatchId}`);
-                //TBD: Need to updated the staus in esMD table as 507 for all the records available in batchData
+                //TBD: Need to update the staus in esMD table as 507 for all the records available in batchData
                 const dateTimeData = await dateTimeUtils.formattedDateTime(logger)
                 const dateTimeDataArray = dateTimeData.split('^')
                 const formattedDateTime = dateTimeDataArray[0]
@@ -67,11 +67,11 @@ async function processBatchFileSQSMessage (messageDataObj, requiredEnvData, Post
                     logger.info(`processBatchFileSQSMessage, batchStatus: ${batchStatus}`)
                     //TBD: After discussion if the batchStatus is Success then Update the status for all records in batchData to 508
                     // else need to update the status back to 501.
-                    // if ( batchStatus === SUCCESS ) {
-                    //     update the status to 508
-                    // } else {
-                    //     update the status to 501 
-                    // }
+                    if ( batchStatus === SUCCESS ) {
+                        //update the status to 508
+                    } else {
+                        //update the status to 501 
+                    }
                 }
             }
         }

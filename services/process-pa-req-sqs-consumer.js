@@ -26,7 +26,8 @@ function processPARequestService (PostgresDBSevice) {
         tablename: process.env.pareqtodcdatatable,
         columns: process.env.pareqinsertcolumns,
         additionalcols: process.env.pareqadditionalcolumns,
-        metadataattribute:process.env.pareqaddidataattribute
+        metadataattribute:process.env.pareqaddidataattribute,
+        auditeventdata: process.env.ss_flatfile_record_gen_audit_event
     }
          
     let logParams = {globaltransid: '', messageid: '' };
@@ -59,6 +60,7 @@ function processPARequestService (PostgresDBSevice) {
                     logger.info(`processPAReqService, MessageId: ${MessageId} MessageDeduplicationId: ${MessageDeduplicationId} ReceiptHandle: ${ReceiptHandle}`)
                     //NOTE: If we are moving the message from DLQ to Main Queue we need to update the MessageDeduplicationId to process it again in main queue.
                     await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, requiredEnvData, PostgresDBSevice)
+
                 }
             }
         },
