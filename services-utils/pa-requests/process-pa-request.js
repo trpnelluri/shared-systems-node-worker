@@ -76,20 +76,6 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, Postgre
                     
                     logger.info(`processPAReqSQSMsg,  auditEventArray: ${JSON.stringify(auditEventArray)}`)
                     //const sendMsgRes = await SQSServiceShared.getInstance().sendMessage(response, targetQueueQRL, logParams);
-                    // Sample Object format
-                    /*
-                    [{
-                        "transaction_id": "NJH000007095288",
-                        "request_type": "SharedSystems",
-                        "worker_name": "ss-node-worker",
-                        "date_timestamp": "2021-07-28T15:25:26.845-04:00",
-                        "hostname": "",
-                        "activity_name": "",
-                        "audit_message_id": "SS_FLATFILE_REC_GEN_SUCCESS",      
-                        "audit_message": "MATURED PA REQUEST FLAT FILE RECORD SUCCESSFULLY GENERATED",
-                        "data": ""
-                    }]
-                    */
                 }
                 return status;
             }

@@ -37,9 +37,13 @@ async function processBatchFileSQSMessage (messageDataObj, requiredEnvData, Post
                 const formattedDateTime = dateTimeDataArray[0]
                 const dateToday = dateTimeDataArray[1]
                 if ( genSrvcregBatchId === batchFileFor ) {
+                    //TBD to genrate the SRVCREG Batch File
                     logger.info(`processBatchFileSQSMessage, genSrvcregBatchId: ${genSrvcregBatchId}`);
+
                 } else if (genDcfBatchId === batchFileFor ) {
+                    //TBD to genrate the DCF Batch File
                     logger.info(`processBatchFileSQSMessage, genDcfBatchId: ${genDcfBatchId}`);
+
                 } else {
                     logger.info(`processBatchFileSQSMessage, genPaReqBatchId: ${batchFileFor}`);
                     const s3ConfigInfo = {
@@ -68,7 +72,9 @@ async function processBatchFileSQSMessage (messageDataObj, requiredEnvData, Post
                     //TBD: After discussion if the batchStatus is Success then Update the status for all records in batchData to 508
                     // else need to update the status back to 501.
                     if ( batchStatus === SUCCESS ) {
-                        //update the status to 508
+                        //update the status to 508 
+                        //TBD Audit Event for each transcationID File Name also we need to include
+                        //Subbmission trans table need to add the file Name 
                     } else {
                         //update the status to 501 
                     }

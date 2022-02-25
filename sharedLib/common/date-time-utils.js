@@ -49,7 +49,7 @@ async function formattedDateTime (logger) {
         sec = (sec < 10 ? '0' : '') + sec;
         
         const formattedDateTime = year + month + day + hour + min + sec
-        const formatdateOnly = month + day + year
+        const formatdateOnly = year + month + day
         const returnData = formattedDateTime + '^' + formatdateOnly
         logger.debug(`formattedDateTime, formattedDate: ${returnData}`);
         resolve(returnData)
