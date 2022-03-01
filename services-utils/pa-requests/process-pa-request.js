@@ -49,10 +49,8 @@ async function processPAReqSQSMsg (payload, glblUniqId, requiredEnvData, Postgre
                 logger.info(`processPAReqSQSMsg, insertData status: ${status}`);
                 if ( status === SUCCESS ) {
                     logger.info(`processPAReqSQSMsg, insertData status inside if: ${status}`);
-
                     let auditEventStatus = generateAuditEvent ( glblUniqId, requiredEnvData )
                     logger.info(`processPAReqSQSMsg, auditEventStatus: ${JSON.stringify(auditEventStatus)}`)
-
                 }
                 return status;
             }
