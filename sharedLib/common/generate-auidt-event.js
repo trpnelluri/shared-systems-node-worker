@@ -44,7 +44,6 @@ async function generateAuditEvent ( glblUniqId, requiredEnvData ) {
             logger.info(`generateAuditEvent, sendMsgRes: ${FAILURE}`)
             return FAILURE
         }
-
     } catch (err) {
         logger.error(`generateAuditEvent, ERROR catch: ${err.stack}`)
     }
