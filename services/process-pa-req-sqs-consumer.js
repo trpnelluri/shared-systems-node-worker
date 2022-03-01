@@ -27,7 +27,8 @@ function processPARequestService (PostgresDBSevice) {
         columns: process.env.pareqinsertcolumns,
         additionalcols: process.env.pareqadditionalcolumns,
         metadataattribute:process.env.pareqaddidataattribute,
-        auditeventdata: process.env.ss_flatfile_record_gen_audit_event
+        auditeventdata: process.env.ss_flatfile_record_gen_audit_event,
+        auditqueueurl: process.env.audit_queue_url
     }
          
     let logParams = {globaltransid: '', messageid: '' };
