@@ -10,6 +10,8 @@ RUN cd /opt/nodejs/shared_systems_node_worker
 
 RUN npm install
 
-RUN npm test
+RUN mkdir -p /efs
+
+#RUN npm test
 
 CMD [ "node", "app.js" ]

@@ -16,9 +16,9 @@ function loadEnvVariablesFromAWSParamStore() {
         awsParamEnv.load(`${configPath}`, { region: awsRegion });
         let logParams = {};
         const logger = loggerUtils.customLogger( EventName, logParams);
-        logger.info('loadEnvVariablesFromAWSParamStore, Env variables loaded successfully from AWS Parameter Store.');
+        logger.info('loadEnvVariablesFromAWSParamStore,Env variables loaded successfully from AWS Parameter Store.');
     } catch (err) {
-        console.error('loadEnvVariablesFromAWSParamStore, ERROR loading the env variables: ' + err.stack)
+        console.error('loadEnvVariablesFromAWSParamStore,ERROR loading the env variables: ' + err.stack)
     }
 }
 

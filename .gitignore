@@ -16,3 +16,4 @@ build/
 .lineCount
 **/junit.xml
 **/package-lock.json
+node_modules

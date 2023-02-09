@@ -9,8 +9,8 @@
 */
 
 const loggerUtils = require('./logger-utils');
-
-const EventName = 'POPULATE_KEYNAME'
+const EventName = 'PopulateKeyNameService'
+let instance = null;
 
 /*
 The follwoing method is used to build the object name to retrive from aws s3 bucket.
@@ -18,19 +18,28 @@ The follwoing method is used to build the object name to retrive from aws s3 buc
     configFolder: config folder Name in aws S3 bucket Ex: 'config/pa-req-esmd-to-dc/'
     objName: actual object name which we need to retrieve from s3 Ex: 'body.json'
 */
-async function populateKeyName(glblUniqId, configFolder, objName) {
-    let logParams = {globaltransid: glblUniqId}
-    const logger = loggerUtils.customLogger( EventName, logParams);
-    return new Promise((resolve, reject) => {
-        logger.debug(`populateKeyName, glblUniqId: ${glblUniqId} configFolder: ${configFolder} objName: ${objName}` )
-        const finalKeyNameInS3 = `${configFolder}${objName}`
-        logger.info(`populateKeyName, glblUniqId: ${glblUniqId} configFolder: ${configFolder} objName: ${objName} finalKeyNameInS3: ${finalKeyNameInS3}` )
-        resolve(finalKeyNameInS3)
-    }).catch((error) => {
-        logger.error(`populateKeyName, ERROR: ${error}` )
-    });
+
+class PopulateKeyNameService {
+
+    static getInstance()
+    {
+        if(!instance){
+            instance = new PopulateKeyNameService();
+        }
+        return instance;
+    }
+    async populateKeyName(glblUniqId, configFolder, objName) {
+        let logParams = {globaltransid: glblUniqId}
+        const logger = loggerUtils.customLogger( EventName, logParams);
+        try {
+            logger.debug(`populateKeyName,glblUniqId: ${glblUniqId} configFolder: ${configFolder} objName: ${objName}` )
+            const finalKeyNameInS3 = `${configFolder}${objName}`
+            logger.info(`populateKeyName,glblUniqId: ${glblUniqId} configFolder: ${configFolder} objName: ${objName} finalKeyNameInS3: ${finalKeyNameInS3}` )
+            return finalKeyNameInS3
+        } catch (err) {
+            logger.error(`populateKeyName,ERROR: ${err}` )
+        }
+    }
 }
 
-module.exports = {
-    populateKeyName,
-};
+module.exports = PopulateKeyNameService

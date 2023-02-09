@@ -6,7 +6,7 @@ async function padLeadingZeros(num, size) {
         while (retrunData.length < size) { retrunData = '0' + retrunData; }
         resolve (retrunData)
     }).catch((error) => {
-        console.error(`padLeadingZeros, ERROR: ${error}` )
+        console.error(`padLeadingZeros,ERROR: ${error}` )
     });
 }
 

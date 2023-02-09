@@ -15,7 +15,7 @@ const EventName = 'BUILD_INSERT_QUERY'
 async function buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData ) {
     const logParams = { globaltransid: glblUniqId };
     const logger = loggerUtils.customLogger(EventName, logParams);
-    logger.info(`buildInsertQuery, metaDataObj: ${JSON.stringify(metaDataObj)} requiredEnvData: ${JSON.stringify(requiredEnvData)}`)
+    logger.info(`buildInsertQuery,metaDataObj: ${JSON.stringify(metaDataObj)} requiredEnvData: ${JSON.stringify(requiredEnvData)}`)
     return new Promise((resolve, reject) => {
         let values = '';
         let dbAttrArray;
@@ -23,13 +23,13 @@ async function buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData ) {
         const tableName = requiredEnvData.tablename
         const columns = requiredEnvData.columns
         const columnsObj = columns.split(',');
-        logger.debug(`buildInsertQuery, columnsObj: ${columnsObj.length}`);
+        logger.debug(`buildInsertQuery,columnsObj: ${columnsObj.length}`);
         columnsObj.forEach((element) => {
             const dbAttribute = element.toLowerCase().trim();
             dbAttrArray = dbAttribute.split('^');
             const attributeName = dbAttrArray[0];
             const dbColName = dbAttrArray[1];
-            logger.debug(`buildInsertQuery, columnsObj element: ${element} attributeName: ${attributeName} dbColName: ${dbColName}`);
+            logger.debug(`buildInsertQuery,columnsObj element: ${element} attributeName: ${attributeName} dbColName: ${dbColName}`);
             if (attributeName !== '') { // Column Names from properties files
                 if (dbColumnNames !== '') {
                     dbColumnNames += ', ';
@@ -42,15 +42,15 @@ async function buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData ) {
                 values += `'${metaDataObj[attributeName]}'`;
             }
         });
-        logger.info(`buildInsertQuery, dbColumnNames without ref data: ${dbColumnNames}`);
+        logger.info(`buildInsertQuery,dbColumnNames without ref data: ${dbColumnNames}`);
 
         const additionalCols = requiredEnvData.additionalcols
 
         if ( additionalCols !== undefined && additionalCols !== null) {
             const additionalColObj = additionalCols.split(',');
-            logger.info(`buildInsertQuery, additionalColObj: ${additionalColObj.length}`);
+            logger.info(`buildInsertQuery,additionalColObj: ${additionalColObj.length}`);
             additionalColObj.forEach((element) => {
-                logger.debug(`buildInsertQuery, additionalColObj element: ${element}`);
+                logger.debug(`buildInsertQuery,additionalColObj element: ${element}`);
                 const refDbAttribute = element.trim();
                 const refDbAttrArray = refDbAttribute.split('^');
 
@@ -73,11 +73,11 @@ async function buildInsertQuery(glblUniqId, metaDataObj, requiredEnvData ) {
         }
 
         const insertQuery = `INSERT INTO ${tableName}(${dbColumnNames}) VALUES(${values})`;
-        logger.info(`buildInsertQuery, insertQuery: ${insertQuery}`);
+        logger.info(`buildInsertQuery,insertQuery: ${insertQuery}`);
         resolve(insertQuery);
 
     }).catch((error) => {
-        logger.error(`buildInsertQuery, ERROR catch: ${error.stack}`);
+        logger.error(`buildInsertQuery,ERROR catch: ${error.stack}`);
     });
 
 }

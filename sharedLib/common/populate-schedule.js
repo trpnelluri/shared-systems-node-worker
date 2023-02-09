@@ -68,11 +68,11 @@ async function populateSchedule ( logger, scheduleInfo ){
         // The follwoing values are to triggier the job hourly in 1st second.
         rule.minute = scheduleMinitue // 0
         rule.second = scheduleSecond // 1
-        logger.info(`populateSchedule, rule: ${JSON.stringify(rule)}`)
+        logger.info(`populateSchedule,rule: ${JSON.stringify(rule)}`)
         resolve(rule)
 
     }).catch((err) => {
-        logger.error(`populateSchedule, ERROR: ${err.stack}`);
+        logger.error(`populateSchedule,ERROR: ${err.stack}`);
     });
 }
 

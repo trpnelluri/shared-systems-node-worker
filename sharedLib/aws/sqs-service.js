@@ -24,19 +24,19 @@ class SqsService{
         const logger = loggerUtils.customLogger( EventName, logParams);
         try {
             const messageDeduplicationId = IdServiceShared.getInstance().getId();
-            logger.info(`sendMessage, targetQueueQRL ${targetQueueQRL} msgBody: ${msgBody}  new messageDeduplicationId: ${messageDeduplicationId}`)
+            logger.debug(`sendMessage,targetQueueQRL ${targetQueueQRL} msgBody: ${JSON.stringify(msgBody)} new messageDeduplicationId: ${messageDeduplicationId}`)
             const sendMsgParams = {
                 MessageBody: JSON.stringify(msgBody),
                 QueueUrl: targetQueueQRL,
                 MessageGroupId: messageGroupId,
                 MessageDeduplicationId: messageDeduplicationId,
             }
-            logger.info(`sendMessage, sendMsgParams: ${JSON.stringify(sendMsgParams)}`)
+            logger.info(`sendMessage,sendMsgParams: ${JSON.stringify(sendMsgParams)}`)
             const messageAcknowledge = await sqs.sendMessage(sendMsgParams).promise();
-            logger.debug(`sendMessage, messageAcknowledge: ${JSON.stringify(messageAcknowledge)}`)
+            logger.debug(`sendMessage,messageAcknowledge: ${JSON.stringify(messageAcknowledge)}`)
             return messageAcknowledge;
         } catch (err) {
-            logger.error(`sendMessage, ERROR in sendMessage catch ${JSON.stringify(err.stack)} `)
+            logger.error(`sendMessage,ERROR in sendMessage catch ${JSON.stringify(err.stack)} `)
             throw Error(`SqsService, Failed to sendMessage to Queue ${targetQueueQRL}, Error: ${JSON.stringify(err)}`);
         }
     }

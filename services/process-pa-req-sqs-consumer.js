@@ -16,7 +16,7 @@ const loggerUtils = require('../sharedLib/common/logger-utils');
 const ProcessPARequest = require('../services-utils/pa-requests/process-pa-request');
 const EventName = 'PROCESS_PA_REQUEST_SERVICE'
 
-function processPARequestService (PostgresDBSevice) {
+function processPARequestService () {
 
     const SQSURL = process.env.ss_pa_req_sqs_url
     const pollingWaitTime = process.env.ss_req_consumer_polling_wait_time_ms;
@@ -34,7 +34,7 @@ function processPARequestService (PostgresDBSevice) {
     let logParams = {globaltransid: '', messageid: '' };
     let logger = loggerUtils.customLogger(EventName, logParams);
       
-    logger.info(`processPAReqService, SQSURL is: ${SQSURL} pollingWaitTime: ${pollingWaitTime}ms }`);
+    logger.info(`processPAReqService,SQSURL is: ${SQSURL} pollingWaitTime: ${pollingWaitTime}ms }`);
     
     const app = Consumer.create({
         queueUrl: SQSURL,
@@ -47,21 +47,20 @@ function processPARequestService (PostgresDBSevice) {
         batchSize: batchSizeToProcess,
         pollingWaitTimeMs: pollingWaitTime, //5 seconds and it's configurable
         handleMessageBatch: async (messages) => {
-            logger.debug(`processPAReqService, Messages: ${messages}`)
+            logger.debug(`processPAReqService,Messages: ${JSON.stringify(messages)}`)
             if ( messages.length > 0 ) {
                 for (let i = 0; i < messages.length; i++) {
                     let paReqObj = JSON.parse(messages[i].Body);
-                    logger.info(`processPAReqService, JSON.stringify(paReqObj): ${JSON.stringify(paReqObj)}`)
+                    logger.info(`processPAReqService,JSON.stringify(paReqObj): ${JSON.stringify(paReqObj)}`)
                     const glblUniqId = paReqObj.pa_req_data[0].esmdtransactionid
-                    console.log(`processPAReqService, glblUniqId: ${glblUniqId}`)
+                    console.log(`processPAReqService,glblUniqId: ${glblUniqId}`)
                     let logParams = {globaltransid: glblUniqId}
                     logger = loggerUtils.customLogger( EventName, logParams)
                     const { MessageId, ReceiptHandle } = messages[i];
                     const MessageDeduplicationId = messages[i].Attributes.MessageDeduplicationId
-                    logger.info(`processPAReqService, MessageId: ${MessageId} MessageDeduplicationId: ${MessageDeduplicationId} ReceiptHandle: ${ReceiptHandle}`)
+                    logger.info(`processPAReqService,MessageId: ${MessageId} MessageDeduplicationId: ${MessageDeduplicationId} ReceiptHandle: ${ReceiptHandle}`)
                     //NOTE: If we are moving the message from DLQ to Main Queue we need to update the MessageDeduplicationId to process it again in main queue.
-                    await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, requiredEnvData, PostgresDBSevice)
-
+                    await ProcessPARequest.processPAReqSQSMsg(paReqObj, glblUniqId, requiredEnvData)
                 }
             }
         },
@@ -75,25 +74,25 @@ function processPARequestService (PostgresDBSevice) {
     });
 
     app.on('error', (err) => {
-        logger.error(`processPAReqService, Error in Audit Trans Consumer: ${err.message}`);
+        logger.error(`processPAReqService,Error in PA Request Process Consumer: ${err.message}`);
     });
   
     app.on('processing_error', (err) => {
-        logger.error(`processPAReqService, processing_error in Audit Trans Consumer: ${err.stack}`);
+        logger.error(`processPAReqService,processing_error in PA Request Process Consumer: ${err.stack}`);
     });
 
     app.on('timeout_error', (err) => {
-        logger.error(`processPAReqService, timeout_error in Audit Trans Consumer: ${err.stack}`);
+        logger.error(`processPAReqService,timeout_error in PA Request Process Consumer: ${err.stack}`);
     });
 
     app.on('message_processed', (err) => {
-        logger.info('processPAReqService, message_processed Successfully in Audit Trans Consumer');
+        logger.info('processPAReqService,message_processed Successfully in PA Request Process Consumer');
     });
   
     app.start();
     
     process.on('SIGINT', () => {
-        logger.info('processPAReqService, SIGINT Received stopping Audit Trans consumer');
+        logger.info('processPAReqService,SIGINT Received stopping PA Request Process Consumer');
         logger.clear();
         app.stop();
         setTimeout(process.exit, 5000);
